@@ -1,0 +1,29 @@
+#To start webserver (inside flask_app): flask run
+#Connect on: http://127.0.0.1:5000/
+# Manual interaction with server (flask_app): flask shell
+#User appropriate imports
+from app.extensions import db
+from app.models.community import Community
+from app.models.project import Project
+
+#db.drop_all() #Use when changes to db structure have been made (columns)
+db.create_all()
+
+
+
+#Manual Communiti:
+for i in range(0, 10):
+    random_num = random.randrange(1, 1000)
+    community = Community(name=f'Community #{random_num}',
+                description=f'Description #{random_num}')
+    db.session.add(community)
+    print(community)
+    print(community.description)
+    print('--')
+    db.session.commit()
+
+#Manual projects:
+p1 = Project(title='Why is the sky blue?', plan='Because... Why not?', community_id=1)
+p2 = Project(title='What is love?', plan='A portal to the underworld.', community_id=2)
+db.session.add_all([p1, p2])
+db.session.commit()
