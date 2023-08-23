@@ -7,7 +7,6 @@ class Community(db.Model):
     
     projects = db.relationship('Project', backref='community')
 
-
     def __repr__(self):
         return f'<Post "{self.name}">'
 

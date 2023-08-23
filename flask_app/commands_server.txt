@@ -5,13 +5,12 @@
 from app.extensions import db
 from app.models.community import Community
 from app.models.project import Project
-
-#db.drop_all() #Use when changes to db structure have been made (columns)
+#...
 db.create_all()
 
+#db.drop_all() #Use when changes to db structure have been made (columns)
 
-
-#Manual Communiti:
+#Manual Communities
 for i in range(0, 10):
     random_num = random.randrange(1, 1000)
     community = Community(name=f'Community #{random_num}',
@@ -23,7 +22,8 @@ for i in range(0, 10):
     db.session.commit()
 
 #Manual projects:
-p1 = Project(title='Why is the sky blue?', plan='Because... Why not?', community_id=1)
-p2 = Project(title='What is love?', plan='A portal to the underworld.', community_id=2)
-db.session.add_all([p1, p2])
-db.session.commit()
+for i in range(1, 11):
+    for j in range(0, 10):
+        p1 = Project(title=f'Project{i + j}', plan=f'projec with a plan:?{i - j}', community_id=i)
+        db.session.add_all([p1])
+        db.session.commit()
