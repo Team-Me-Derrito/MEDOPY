@@ -16,6 +16,15 @@ class Project(models.Model):
     endDate = models.DateTimeField()
     description = models.CharField(max_length=200)
 
+class Venue(models.Model):
+    locationName = models.CharField(max_length=100)
+    capacity = models.IntegerField()
+    gpsLongitude = models.FloatField()
+    gpsLattitude = models.FloatField()
+    
+class InterestType(models.Model):
+    InterestType = models.CharField(max_length=100)
+
 class Event(models.Model):
     project = models.ForeignKey(Community, on_delete=models.CASCADE)
     interestType = models.ForeignKey(InterestType, on_delete=models.CASCADE)
@@ -23,12 +32,6 @@ class Event(models.Model):
     startDateTime = models.DateTimeField(default=datetime.now)
     duration = models.IntegerField()
     price = models.FloatField()
-
-class Venue(models.Model):
-    locationName = models.CharField(max_length=100)
-    capacity = models.IntegerField()
-    gpsLongitude = models.FloatField()
-    gpsLattitude = models.FloatField()
 
 class Account(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
@@ -41,9 +44,6 @@ class News(models.Model):
     publicationDate = models.DateTimeField(default=datetime.now())
     description = models.CharField(max_length=500)
 
-class InterestType(models.Model):
-    InterestType = models.CharField(max_length=100)
-    
 class AccountInterest(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     interestType = models.ForeignKey(InterestType, on_delete=models.CASCADE)
