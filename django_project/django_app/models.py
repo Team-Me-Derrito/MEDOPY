@@ -37,4 +37,29 @@ class Account(models.Model):
 
 class News(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    title = models.CharField(max_length=)
+    title = models.CharField(max_length=100)
+    publicationDate = models.DateTimeField(default=datetime.now())
+    description = models.CharField(max_length=500)
+
+class InterestType(models.Model):
+    InterestType = models.CharField(max_length=100)
+    
+class AccountInterest(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    interestType = models.ForeignKey(InterestType, on_delete=models.CASCADE)
+
+class DiscussionPost(models.Model):
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=datetime.now())
+    text = models.CharField(max_length=200)
+
+class TicketTierType(models.Model):
+    ticketTierType = models.CharField(max_length=50)
+
+class Ticket(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    ticketTierType = models.ForeignKey(TicketTierType, on_delete=models.CASCADE)
+
+
