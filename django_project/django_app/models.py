@@ -32,6 +32,7 @@ class Event(models.Model):
     startDateTime = models.DateTimeField(default=datetime.now)
     duration = models.IntegerField()
     price = models.FloatField()
+    name = models.CharField(max_length=100)
 
 class Account(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
