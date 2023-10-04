@@ -18,12 +18,25 @@ class Project(models.Model):
 
 class Venue(models.Model):
     locationName = models.CharField(max_length=100)
+    address = models.CharField(max_length=200)
     capacity = models.IntegerField()
     gpsLongitude = models.FloatField()
-    gpsLattitude = models.FloatField()
+    gpsLatitude = models.FloatField()
     
 class InterestType(models.Model):
-    InterestType = models.CharField(max_length=100)
+    interestType = models.CharField(max_length=100)
+
+
+class Account(models.Model):
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    accountName = models.CharField(max_length=100)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=50)
+    phoneNumber = models.IntegerField()
+    email = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
+    salt = models.CharField(max_length=100)
+    token = models.CharField(max_length=200)
 
 class Event(models.Model):
     project = models.ForeignKey(Community, on_delete=models.CASCADE)
@@ -33,11 +46,8 @@ class Event(models.Model):
     duration = models.IntegerField()
     price = models.FloatField()
     name = models.CharField(max_length=100)
-
-class Account(models.Model):
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
-    accountName = models.CharField(max_length=100)
-    age = models.IntegerField()
+    description = models.CharField(max_length=400)
+    creator = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 class News(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -55,12 +65,8 @@ class DiscussionPost(models.Model):
     timestamp = models.DateTimeField(default=datetime.now())
     text = models.CharField(max_length=200)
 
-class TicketTierType(models.Model):
-    ticketTierType = models.CharField(max_length=50)
-
 class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    ticketTierType = models.ForeignKey(TicketTierType, on_delete=models.CASCADE)
 
 
