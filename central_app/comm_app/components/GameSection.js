@@ -1,17 +1,48 @@
 import React, { useEffect, useRef } from 'react';
 import styles from './GameSection.module.css'
+import { generatePerlinNoise } from 'perlin-noise'
 
-export default function GameSection({ scores, imgSource, isize }) {
+const imgSource = [
+    '/images/GameImages/Tile1.png',
+
+    '/images/GameImages/G01.png',
+    '/images/GameImages/G11.png',
+    '/images/GameImages/G21.png',
+    '/images/GameImages/G31.png',
+    '/images/GameImages/G41.png',
+
+    '/images/GameImages/I01.png',
+    '/images/GameImages/I11.png',
+    '/images/GameImages/I21.png',
+    '/images/GameImages/I31.png',
+    '/images/GameImages/I41.png',
+
+    '/images/GameImages/F01.png',
+    '/images/GameImages/F11.png',
+    '/images/GameImages/F21.png',
+    '/images/GameImages/F31.png',
+    '/images/GameImages/F41.png',
+
+    '/images/GameImages/P01.png',
+    '/images/GameImages/P11.png',
+    '/images/GameImages/P21.png',
+    '/images/GameImages/P31.png',
+    '/images/GameImages/P41.png',
+];
+
+export default function GameSection({ scores, isize }) {
+    //Determine rows based on number of scores?
+
     const [theme, setTheme] = React.useState(0);
-    const [size, setSize] = React.useState(isize);
+    const [rowSize, setRowSize] = React.useState(isize * 2 + 1);
 
     function changeTheme() { setTheme((theme + 1) % 4); }
-    function changeSize(change) { setSize(size + change) }
+    function changeSize(change) { setRowSize(rowSize + 2 * change) }
 
     return (
         <div className={styles['game-container']}>
             <GameBanner changeTheme={changeTheme} changeSize={changeSize} />
-            <GameDisplay scores={scores} imgSource={imgSource} theme={theme} size={size} />
+            <GameDisplay scores={scores} theme={theme} rowSize={rowSize} />
         </div>
     );
 }
@@ -19,7 +50,7 @@ export default function GameSection({ scores, imgSource, isize }) {
 function GameBanner({ changeTheme, changeSize }) {
     return (
         <h2>Community Display Game
-            <button onClick={changeTheme}>Change Theme</button>
+            <button onClick={() => changeTheme()}>Change Theme</button>
             <button onClick={() => changeSize(1)}>incSize</button>
             <button onClick={() => changeSize(-1)}>DecSize</button>
         </h2>
@@ -27,70 +58,93 @@ function GameBanner({ changeTheme, changeSize }) {
 }
 
 //Take in an array of numbers -> re order to have in display order
-function GameDisplay({ scores, imgSource, theme, size }) {
-    //State to update image loading
-    const [imageLoading, setImageLoading] = React.useState(0);
+function GameDisplay({ scores, theme, rowSize }) {
+    const [firstLoad, setFirstLoad] = React.useState(true);
+
+    const [displayScores, setDisplayScores] = React.useState(scores);
+    function setPermutate(scores, rows, cols) { setDisplayScores(permuteScores(scores, rows, cols)) }
+
+    const [colSize, setColSize] = React.useState(0);
+    function updateColSize(newCol, reload) {
+        if (reload || colSize != newCol) {
+            setColSize(newCol)
+            setPermutate(scores, rowSize, colSize)
+        }
+    }
 
     const canvasRef = useRef(null);
     useEffect(() => {
-        const images = imgSource.map((src) => {
+        const images = imgSource.map((src, index) => {
             const image = new Image();
             image.src = src;
-            image.onload = () => { setImageLoading(imageLoading + 1) };
+            image.onload = () => {
+                if (firstLoad) {
+                    setPermutate(scores, rowSize, colSize)
+                    setFirstLoad(false)
+                }
+                window.dispatchEvent(new Event('resize'))
+            };
             return image;
         });
 
         const canvas = canvasRef.current;
         const resizeCanvas = () => {
-            updateCanvas(canvas, theme, images, scores, size)
+            updateCanvas(canvas, images, theme,
+                rowSize, colSize, updateColSize,
+                displayScores)
         };
 
-        resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         return () => { window.removeEventListener('resize', resizeCanvas); };
-    }, [scores, theme, size, imageLoading])
+    }, [displayScores, theme, rowSize, colSize])
 
     return (
         <div className={styles['canvas-container']}>
             <canvas ref={canvasRef} />
+            {/* Temp Button (Use tab) */}
+            <button onClick={() => updateColSize(colSize, true)}>Change Theme</button>
         </div>
     );
 }
 
-function updateCanvas(canvas, theme, images, given_scores, size) {
-    const context = canvas.getContext('2d');
-    context.globalAlpha = 1;
+function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores) {
+    //Canvas size
     const canvasContainer = canvas.parentElement;
     canvas.width = canvasContainer.clientWidth;
     canvas.height = canvasContainer.clientHeight;
 
-    //Hardcoded values:
+    //Canvas fill
+    const context = canvas.getContext('2d');
+    context.globalAlpha = 1;
     context.fillStyle = ["#4a9547", "lightblue", "#ffd16e", "pink"][theme];
     context.fillRect(0, 0, canvas.width, canvas.height);
+
+    //coded values:
+    const finalRow = rowSize;
     const imageSize = 1024;
     const Xoverlap = 1024 - 664 - 498;
     const Yoverlap = 1024 - 180 - 135;
 
-    //Derived values
-    const finalRow = 2 * size;
-    const scale = (canvas.height / ((imageSize - Yoverlap) * (finalRow + 1) + Yoverlap)) * 0.99;
-    const finalCol = Math.floor(((canvas.width / scale) - Xoverlap) / (imageSize - Xoverlap)) - 1;
+    //Layout values
+    const scale = (canvas.height / ((imageSize - Yoverlap) * (finalRow) + Yoverlap)) * 0.99;
+    const finalCol = Math.floor(((canvas.width / scale) - Xoverlap) / (imageSize - Xoverlap));
+    if (finalCol != col) { updateColSize(finalCol, false) }
+
+    //Image adjustment values
     const effectiveWidth = scale * (imageSize - Xoverlap);
     const effectiveHeight = scale * (imageSize - Yoverlap);
-    const xOffset = (canvas.width - (effectiveWidth * (finalCol + 1) + scale * Xoverlap)) / 2;
-    const yOffset = (canvas.height - (effectiveHeight * (finalRow + 1) + scale * Yoverlap)) / 4;
+    const xOffset = (canvas.width - (effectiveWidth * (finalCol) + scale * Xoverlap)) / 2;
+    const yOffset = (canvas.height - (effectiveHeight * (finalRow) + scale * Yoverlap)) / 4;
 
-    const tileCount = Math.max(0, (finalRow + 1) * (finalCol + 1) - 4 - finalRow / 2);
-    const scores = permuteScores(given_scores, tileCount);
-
-
+    //const tileCount = Math.max(0, (finalRow) * (finalCol) - 4 - finalRow / 2);
+    //Place images in grid
     let scoreInc = 0;
-    for (let row = 0; row <= finalRow; row++) {
-        for (let col = 0; col <= finalCol; col++) {
+    for (let row = 0; row < finalRow; row++) {
+        for (let col = 0; col < finalCol; col++) {
             //Skip the final column and the corners
-            if ((row % 2 == 1 && col == finalCol) || (row == 0 && col == 0) ||
-                (row == 0 && col == finalCol) || (row == finalRow && col == 0) ||
-                (row == finalRow && col == finalCol)) { continue }
+            if ((row % 2 == 1 && col + 1 == finalCol) || (row == 0 && col == 0) ||
+                (row == 0 && col + 1 == finalCol) || (row + 1 == finalRow && col == 0) ||
+                (row + 1 == finalRow && col + 1 == finalCol)) { continue }
             const imgIndex = (scores[scoreInc % scores.length] == 0 ? 0 : scores[scoreInc % scores.length] + 5 * theme);
             scoreInc += 1;
             const image = images[imgIndex] ?? images[0];
@@ -101,85 +155,35 @@ function updateCanvas(canvas, theme, images, given_scores, size) {
     }
 }
 
-//Make this functon better?
-function permuteScores(scores, n) {
-    // Sort the scores array in descending order
-    const sortedScores = scores.sort((a, b) => b - a);
+function permuteScores(scores, n, m) {
+    //Array to generate random noise in 2d grid
+    const arr = generatePerlinNoise(m, n, { octaveCount: 2, persistence: 0.02 });
 
-    let left = Math.floor(n / 2);
-    let right = left
-    const display = new Array(n).fill(0);
-    // Start with the center and place the highest value
-    display[Math.floor(n / 2)] = sortedScores[0];
+    //Sort noise based on value and stores original index
+    const indexedArray = arr.map((value, index) => ({ value, index }));
+    indexedArray.sort((a, b) => b.value - a.value).forEach((item, newIndex) => { item.newIndex = newIndex; });
 
-    let scoreIndex = 1;
-    for (let level = 1; level <= Math.floor(n / 2); level++) {
-        left--;
-        display[left] = sortedScores[scoreIndex];
-        scoreIndex++;
+    //New array that restores the sorted ordering to the orginal positions
+    const integerArray = new Array(arr.length);
+    indexedArray.forEach((item) => { integerArray[item.index] = item.newIndex; });
 
-        if (scoreIndex < sortedScores.length) {
-            right++;
-            display[right] = sortedScores[scoreIndex];
-            scoreIndex++;
-        }
-    }
-    return display;
+    //Place sorted into index array at index
+    const sortedScores = scores.sort()
+    const scoreArray = integerArray.map(indexAtIndex => sortedScores[indexAtIndex % sortedScores.length]);
+
+    return scoreArray;
 }
 
+function formatNumber(num) {
+    return (num).toFixed(2).padStart(3, '0');
+}
 
-import { generatePerlinNoise } from 'perlin-noise'
-
-function perlinMap(finalRow, finalCol) {
-    const n = finalRow + 1;
-    const m = finalCol + 1;
-    let integerArray;
-    let checkMid = false;
-    var arr = [];
-    var it = 0;
-    while (checkMid == false) {
-        it++;
-        arr = generatePerlinNoise(m, n, {octaveCount : 2, persistence : 0.01});
-        for (let row = 0; row <= finalRow; row++) {
-            for (let col = 0; col <= finalCol; col++) {
-                //Skip the final column and the corners
-                if ((row % 2 == 1 && col == finalCol) || (row == 0 && col == 0) ||
-                    (row == 0 && col == finalCol) || (row == finalRow && col == 0) ||
-                    (row == finalRow && col == finalCol)) {
-                        arr[row * m + col] = 1;
-                    } 
-            }
-        }
-        
-        const indexedArray = arr.map((value, index) => ({ value, index }));
-        indexedArray.sort((a, b) => a.value - b.value).forEach((item, newIndex) => {item.newIndex = newIndex;});
-    
-        integerArray = new Array(arr.length);
-        indexedArray.forEach((item) => {integerArray[item.index] = item.newIndex;});
-    
-        // console.log(`N: ${Math.floor(n * 3 / 10)} ; row < ${Math.ceil(n * 7 / 10)}`)
-        // console.log(`M: ${Math.floor(m * 3 / 10)} ; col < ${Math.ceil(m * 7 / 10)}`)
-        //prn2d(integerArray, n, m)
-
-        for (let row = Math.floor(n * 3 / 10); row < Math.ceil(n * 7 / 10); row++) {
-            for (let col = Math.floor(m * 3 / 10); col < Math.ceil(m * 7 / 10); col++) {
-                // console.log(`found at row: ${row} and col: ${col}, value: ${integerArray[row * m + col]}`)
-                if (integerArray[row * m + col] == 0) {
-                    //console.log(`found at row: ${row} and col: ${col}`)
-                    checkMid = true;
-                }
-            }
-        }
-        // console.log(it)
-        //prompt()
-        // if (it > 10000) {return [1];}
+function format2DArray(arr, n, m) {
+    for (let i = 0; i < n; i++) {
+        const row = arr.slice(i * m, (i + 1) * m);
+        const formatRow = row.map(num => formatNumber(num))
+        console.log(formatRow.join('\t'));
     }
-
-    console.log(it)
-
-    // prn2d(arr, n, m)
-    prn2d(integerArray, n, m)
-    return integerArray;
 }
 
 function prn2d(arr, n, m) {
@@ -188,6 +192,3 @@ function prn2d(arr, n, m) {
         console.log(row.join('\t'));
     }
 }
-
-
-

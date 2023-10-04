@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-google-maps/api": "^2.19.2",
+    "bootstrap": "^5.3.2",
     "canvas": "^2.11.2",
     "next": "13.4.19",
     "perlin-noise": "^0.0.1",
