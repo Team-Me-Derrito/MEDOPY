@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-def getEventsByAccount(accountID):
-    account = Account.objects.get(id=accountID)
+def getEventsByAccount(accountToken):
+    account = Account.objects.get(token=accountToken)
     projects = Project.objects.filter(community=account.community)
     interests = AccountInterest.objects.filter(account=account)
 
@@ -20,7 +20,7 @@ def getEventsByAccount(accountID):
 """
 getInterestEvents()
     Gets all events that match the current account's community and interests.
-    Request data: accountID.
+    Request data: accountToken.
 """
 @csrf_exempt
 def getInterestEvents(request):
@@ -29,7 +29,7 @@ def getInterestEvents(request):
         data = json.loads(data)
         print("Getting interest events")
 
-        events = getEventsByAccount(data["accountID"])
+        events = getEventsByAccount(data["accountToken"])
         return JsonResponse(events)
 
 """
@@ -60,6 +60,13 @@ def getEventInfo(request):
 
         return JsonResponse(struct)
 
+"""
+createToken()
+    Used to create a session token.... TODO
+"""
+def createToken():
+    return
+
 
 """
 createAccount()
@@ -79,13 +86,14 @@ def createAccount(request):
                              phoneNumber=data["phoneNumber"],
                              email=data["email"],
                              password=data["password"],
-                             salt="blah"
+                             salt="blah",
+                             token=createToken()
                              )
 
 
 
 """
-Get the 20 closest events to given current_gps.
+Get the 20 closest events to the given current_gps.
 """
 def getCloseEvents(current_gps):
     events = Event.objects.all()
