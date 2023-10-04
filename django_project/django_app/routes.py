@@ -2,7 +2,7 @@ from models import Event, Venue, Project, Account, AccountInterest, Ticket, Comm
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
-import json
+import json, re
 
 """
 getEventsByAccount()
@@ -107,7 +107,9 @@ getAllEvents()
 """
 @csrf_exempt
 def getAllEvents(request):
-    events = Event.objects.all()
+    events = []
+    for event in Event.objects.all():
+        events.append({"id": event.id, "name": event.name})
     return JsonResponse({"events": events})
 
 """
@@ -126,7 +128,7 @@ def getAllCommunityEvents(request):
         events = []
         for event in Event.objects.all():
             if (event.project in projects):
-                events.append({"id": event.id})
+                events.append({"id": event.id, "name": event.name})
 
         return JsonResponse({"events": events})
     
@@ -151,7 +153,7 @@ def getUpcommingEvents(request):
         events = []
         for event in upcomming_events:
             if (event.project in projects):
-                events.append({"id": event.id})
+                events.append({"id": event.id, "name": event.name})
 
         return JsonResponse({"events": events})
     
@@ -169,7 +171,23 @@ def getTicketed(request):
 
         events = []
         for ticket in account_tickets:
-            events.append({"id": ticket.event.id})
+            events.append({"id": ticket.event.id, "name": ticket.event.name})
+
+        return JsonResponse({"events": events})
+    
+def searchEvents(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+        projects = Project.objects.filter(community=community)
+
+        events = []
+        for event in Event.objects.all():
+            if (event.project in projects) and (re.search(data["query"], event.name)):
+                events.append({"id": event.id, "name": event.name})
 
         return JsonResponse({"events": events})
 
