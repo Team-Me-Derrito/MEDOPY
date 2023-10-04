@@ -22,12 +22,12 @@ export default function MapSection() {
       <h2>Map Section</h2>
       {!isLoaded ? <div>Loading</div> : <MapComponent />}
 
-      <div className={styles["overlay-box left-overlay"]}>
+      <div className={`${styles['overlay-box']} ${styles['left-overlay']}`}>
         <h2 className={styles['overlay-title']}>Project Information</h2>
         {renderList(projectItems, setProjectItems, toggleItem)}
       </div>
 
-      <div className={styles["overlay-box right-overlay"]}>
+      <div className={`${styles['overlay-box']} ${styles['right-overlay']}`}>
         <h2 className={styles['overlay-title']}>Event Information</h2>
         {renderList(eventItems, setEventItems, toggleItem)}
       </div>
