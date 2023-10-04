@@ -1,18 +1,22 @@
 from models import Event, Venue, Project, Account, AccountInterest, Ticket, Community
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
+from datetime import datetime, timedelta
+import json, re
 
-def getEventsByAccount(accountToken):
-    account = Account.objects.get(token=accountToken)
+"""
+getEventsByAccount()
+    Gets all events for a particular accountToken and accountID with the right interestsType
+"""
+def getInterestEventsByAccount(accountToken, accountID):
+    account = Account.objects.get(id=accountID, token=accountToken)
     projects = Project.objects.filter(community=account.community)
     interests = AccountInterest.objects.filter(account=account)
 
     events = []
     for event in Event.objects.all():
         if (event.project in projects) and (event.interestType in interests):
-            hasTicket = Ticket.objects(account=account, event=event).exists()
-            struct = {"eventID": event.id, "eventName": event.name, "hasTicket":hasTicket}
+            struct = {"eventID": event.id, "eventName": event.name}
             events.append(struct)
    
     return events
@@ -20,7 +24,7 @@ def getEventsByAccount(accountToken):
 """
 getInterestEvents()
     Gets all events that match the current account's community and interests.
-    Request data: accountToken.
+    Required request data: accountToken + accountID.
 """
 @csrf_exempt
 def getInterestEvents(request):
@@ -29,8 +33,8 @@ def getInterestEvents(request):
         data = json.loads(data)
         print("Getting interest events")
 
-        events = getEventsByAccount(data["accountToken"])
-        return JsonResponse(events)
+        events = getInterestEventsByAccount(data["token"], data["account_id"])
+        return JsonResponse({"events": events})
 
 """
 getEventInfo()
@@ -67,11 +71,17 @@ createToken()
 def createToken():
     return
 
+"""
+createSalt()
+    Generates a password salt... TODO
+"""
+def createSalt():
+    return
 
 """
 createAccount()
     Make a new account from sign up info.
-    Request data: communityID, 
+    Request data: communityID, accountName, age, gender, phoneNumber, email, password
 """
 def createAccount(request):
     if request.method == "POST":
@@ -89,8 +99,97 @@ def createAccount(request):
                              salt="blah",
                              token=createToken()
                              )
+        newAccount.save()
+        return HttpResponse("New account has been created")
+"""
+getAllEvents()
+    Returns all the events in the database
+"""
+@csrf_exempt
+def getAllEvents(request):
+    events = []
+    for event in Event.objects.all():
+        events.append({"id": event.id, "name": event.name})
+    return JsonResponse({"events": events})
 
+"""
+getAllCommuntiyEvents()
+    Returns all the events of an account's community.
+"""
+def getAllCommunityEvents(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
 
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+        projects = Project.objects.filter(community=community)
+        
+        events = []
+        for event in Event.objects.all():
+            if (event.project in projects):
+                events.append({"id": event.id, "name": event.name})
+
+        return JsonResponse({"events": events})
+    
+"""
+getUpcommingEvents()
+    Returns all events in the next month.
+"""
+def getUpcommingEvents(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+        projects = Project.objects.filter(community=community)
+        curr_date = datetime.now().date()
+        end_date = curr_date + timedelta(days=30)
+        upcomming_events = Event.objects.filter(
+            startDateTime__date__range=(curr_date, end_date)
+        )
+        
+        events = []
+        for event in upcomming_events:
+            if (event.project in projects):
+                events.append({"id": event.id, "name": event.name})
+
+        return JsonResponse({"events": events})
+    
+"""
+getTicketed()
+    Gets all event ids of an accounts upcomming ticketed events.
+"""
+def getTicketed(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        account_tickets = Ticket.objects.filter(account=account)
+
+        events = []
+        for ticket in account_tickets:
+            events.append({"id": ticket.event.id, "name": ticket.event.name})
+
+        return JsonResponse({"events": events})
+    
+def searchEvents(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+        projects = Project.objects.filter(community=community)
+
+        events = []
+        for event in Event.objects.all():
+            if (event.project in projects) and (re.search(data["query"], event.name)):
+                events.append({"id": event.id, "name": event.name})
+
+        return JsonResponse({"events": events})
 
 """
 Get the 20 closest events to the given current_gps.
