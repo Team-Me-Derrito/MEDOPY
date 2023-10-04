@@ -12,6 +12,7 @@
     "@react-google-maps/api": "^2.19.2",
     "canvas": "^2.11.2",
     "next": "13.4.19",
+    "perlin-noise": "^0.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "^0.32.5"
