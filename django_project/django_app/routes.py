@@ -1,4 +1,4 @@
-from models import Event, Venue, Project, Account, AccountInterest, Ticket, Community
+from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
