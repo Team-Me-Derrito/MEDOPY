@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
 import React from 'react';
+import styles from './MapSection.module.css'
 
 export default function MapSection() {
-  const {isLoaded} = useLoadScript({googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,});
+  const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, });
 
   const [projectItems, setProjectItems] = React.useState(getProjects());
   const [eventItems, setEventItems] = React.useState([]);
@@ -17,17 +18,17 @@ export default function MapSection() {
   };
 
   return (
-    <div className='map-container'> 
+    <div className={styles['map-container']}>
       <h2>Map Section</h2>
       {!isLoaded ? <div>Loading</div> : <MapComponent />}
 
-      <div className="overlay-box left-overlay">
-        <h2 className='overlay-title'>Project Information</h2>
+      <div className={`${styles['overlay-box']} ${styles['left-overlay']}`}>
+        <h2 className={styles['overlay-title']}>Project Information</h2>
         {renderList(projectItems, setProjectItems, toggleItem)}
       </div>
 
-      <div className="overlay-box right-overlay">
-        <h2 className='overlay-title'>Event Information</h2>
+      <div className={`${styles['overlay-box']} ${styles['right-overlay']}`}>
+        <h2 className={styles['overlay-title']}>Event Information</h2>
         {renderList(eventItems, setEventItems, toggleItem)}
       </div>
     </div>
@@ -35,12 +36,12 @@ export default function MapSection() {
 }
 
 function MapComponent() {
-  const center = useMemo(() => ({lat: 44, lng: -80}), []);
+  const center = useMemo(() => ({ lat: 44, lng: -80 }), []);
   return (
-    <GoogleMap 
-      zoom={10} 
-      center={center} 
-      mapContainerClassName='map-container1'
+    <GoogleMap
+      zoom={10}
+      center={center}
+      mapContainerClassName={styles['map-container1']}
     >
       <Marker position={center} />
     </GoogleMap>
@@ -78,14 +79,14 @@ function getEvents() {
 //
 function renderList(items, setItems, toggleItem) {
   return (
-    <ul className='side-list'>
+    <ul className={styles['side-list']}>
       {items.map((item) => (
-        <li key={item.id} className='list-item-container'>
-          <div className='toggle-container'>
+        <li key={item.id} className={styles['list-item-container']}>
+          <div className={styles['toggle-container']}>
             {renderToggleBtn(item, setItems, toggleItem)}
-            <span className="item-name">{item.name}</span>
+            <span className={styles["item-name"]}>{item.name}</span>
           </div>
-          <div className="additional-info">{item.isOpen && <div>{item.info}</div>}</div>
+          <div className={styles["additional-info"]}>{item.isOpen && <div>{item.info}</div>}</div>
         </li>
       ))}
     </ul>
@@ -94,8 +95,8 @@ function renderList(items, setItems, toggleItem) {
 
 function renderToggleBtn(item, setItems, toggleItem) {
   return (
-    <div className={`toggle-button ${item.isOpen ? 'filled' : 'unfilled'}`} onClick={() => toggleItem(item.id, setItems)}>
-      <div className="circle"></div>
+    <div className={`${styles['toggle-button']} ${item.isOpen ? styles['filled'] : styles['unfilled']}`} onClick={() => toggleItem(item.id, setItems)}>
+      <div className={styles["circle"]}></div>
     </div>
   )
 }

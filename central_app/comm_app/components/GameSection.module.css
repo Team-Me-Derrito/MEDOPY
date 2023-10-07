@@ -1,0 +1,16 @@
+/* Game Elements */
+.game-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 0px solid black;
+  }
+  
+.canvas-container {
+    width: 100%;
+    height: 100vh;
+    border: 1px solid #000;
+    background-color: white;
+    position: relative;
+}
