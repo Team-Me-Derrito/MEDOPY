@@ -39,7 +39,7 @@ class Account(models.Model):
     token = models.CharField(max_length=200)
 
 class Event(models.Model):
-    project = models.ForeignKey(Community, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     interestType = models.ForeignKey(InterestType, on_delete=models.CASCADE)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     startDateTime = models.DateTimeField(default=datetime.now)
