@@ -98,7 +98,7 @@ def createAccount(request):
                              password=data["password"],
                              salt="blah",
                              token=createToken()
-                             )
+                            )
         newAccount.save()
         return HttpResponse("New account has been created")
 """
