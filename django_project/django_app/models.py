@@ -26,11 +26,10 @@ class Venue(models.Model):
 class InterestType(models.Model):
     interestType = models.CharField(max_length=100)
 
-
 class Account(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     accountName = models.CharField(max_length=100)
-    age = models.IntegerField()
+    birthday = models.DateField()
     gender = models.CharField(max_length=50)
     phoneNumber = models.IntegerField()
     email = models.CharField(max_length=100)
