@@ -4,7 +4,7 @@ from . import views, routes
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("api/events/recommendedEvents", routes.getInterestEvents),
+    path("api/events/recommended", routes.getInterestEvents),
     path("api/events/all", routes.getAllEvents),
     path("api/events/upcoming", routes.getUpcommingEvents),
     path("api/events/search", routes.searchEvents),
