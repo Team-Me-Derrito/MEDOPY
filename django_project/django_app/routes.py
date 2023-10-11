@@ -1,4 +1,4 @@
-from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community
+from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community, DiscussionPost
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
@@ -175,6 +175,45 @@ def getTicketed(request):
 
         return JsonResponse({"events": events})
     
+"""
+getDiscussionPosts()
+    Gets all the discussion posts for the users community
+"""
+def getDiscussionPosts(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+
+        posts = []
+        for post in DiscussionPost.objects.all():
+            if post.community == community:
+                posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
+
+        return JsonResponse({"posts":posts})
+    
+"""
+newDiscussionPost()
+    User can create a new post one the discussion board
+"""
+def newDiscussionPost(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+
+        post = DiscussionPost(
+            community=community,
+            account=account,
+            timestamp=datetime.now(),
+            text=data["post_text"]
+            )
+        post.save()
+    
 def searchEvents(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -220,3 +259,4 @@ def distanceBetween(gps1, gps2):
     longitude = gps1["longitude"] - gps2["longitude"]
     latitude = gps1["latitude"] - gps2["latitude"]
     return ((longitude ** 2 + latitude ** 2) ** 0.5)
+
