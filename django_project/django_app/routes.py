@@ -2,7 +2,8 @@ from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Com
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
-import json, re, queries
+import json, re
+from . import queries
 
 """
 getInterestEvents()
