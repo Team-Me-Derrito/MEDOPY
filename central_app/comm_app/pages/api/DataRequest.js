@@ -1,81 +1,41 @@
-import { BASE_URL, API_KEY, OPTION, ACCOUNT_ID, TOKEN, RECOMMENDED, UPCOMING, SEARCH, ALL, COMMUNITY, QUERY } from '/public/constants/Database.js';
+import { INFO, POSTS, INTERESTS, PROJECTS } from '/public/constants/Database.js';
 import { postRequest } from './BaseRequest.js';
 
-const path = 'events/';
+const path = 'display/';
 
 
-export async function getAllEvents() {
+export async function getCommunityInfo(community_id) {
     const message = {
-        [TOKEN]: 1,
-        [ACCOUNT_ID]: 1
+        [COMMUNITY_ID]: community_id
     };
 
-    const endpoint = path + ALL; // events/all
+    const endpoint = path + INFO; // display/info
     return await postRequest(endpoint, message);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-//Example data getter functions (for the mobile app)
-
-
-export async function getRecommended(token, id) {
+export async function getCommunityPosts(community_id) {
     const message = {
-        [TOKEN]: token,
-        [ACCOUNT_ID]: id
+        [COMMUNITY_ID]: community_id
     };
 
-    const endpoint = path + RECOMMENDED; // events/recommended
-    return await postRequest(endpoint, mesasage);
-}
-
-// export async function getAllEvents(token, id) {
-//     const message = {
-//         [TOKEN]: token,
-//         [ACCOUNT_ID]: id
-//     };
-
-//     const endpoint = path + ALL; // events/all
-//     return await postRequest(endpoint, message);
-// }
-
-export async function getUpcoming(token, id) {
-    const message = {
-        [TOKEN]: token,
-        [ACCOUNT_ID]: id
-    };
-
-    const endpoint = path + UPCOMING; // events/upcoming
+    const endpoint = path + POSTS; // display/posts
     return await postRequest(endpoint, message);
 }
 
-export async function searchEvents(id, token, search) {
+export async function getCommunityInterests(community_id) {
     const message = {
-        [TOKEN]: token,
-        [ACCOUNT_ID]: id,
-        [QUERY]: search
+        [COMMUNITY_ID]: community_id
     };
 
-    const endpoint = path + SEARCH; // events/search
+    const endpoint = path + INTERESTS; // display/interests
     return await postRequest(endpoint, message);
 }
 
-export async function getCommunityEvents(token, id) {
+export async function getCommunityProjects(community_id) {
     const message = {
-        [TOKEN]: token,
-        [ACCOUNT_ID]: id
+        [COMMUNITY_ID]: community_id
     };
 
-    const endpoint = path + COMMUNITY; // events/community
+    const endpoint = path + PROJECTS; // display/projects
     return await postRequest(endpoint, message);
 }

@@ -4,7 +4,7 @@ export const API_KEY = 'api_key';
 
 //Account entity
 export const ACCOUNT_ID = 'account_id';
-export const COMMUNITY_ID = 'CommunityID';
+export const COMMUNITY_ID = 'community_id';
 export const NAME = 'Name';
 export const AGE = 'Age';
 export const GENDER = 'Gender';
@@ -24,3 +24,9 @@ export const SEARCH = 'search';
 export const ALL = 'all';
 export const COMMUNITY = 'community';
 export const QUERY = 'query';
+
+// Display
+export const INFO = 'info'
+export const POSTS = 'posts'
+export const INTERESTS = 'interests'
+export const PROJECTS = 'projects'
