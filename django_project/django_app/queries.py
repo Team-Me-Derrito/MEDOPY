@@ -13,7 +13,7 @@ def getInterestEventsByAccount(account_token, account_id):
     events = []
     for event in Event.objects.all():
         if (event.project in projects) and (event.interestType in interests):
-            struct = {"eventID": event.id, "eventName": event.name}
+            struct = {"eventID": event.id, "eventName": event.name, "description": event.description, "venue": event.venue}
             events.append(struct)
    
     return events
