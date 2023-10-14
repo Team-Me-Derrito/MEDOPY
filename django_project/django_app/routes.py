@@ -93,7 +93,7 @@ getAllEvents()
 def getAllEvents(request):
     events = []
     for event in Event.objects.all():
-        events.append({"eventID": event.id, "eventName": event.name, "description": event.description, "venue": event.venue})
+        events.append({"eventID": event.id, "eventName": event.name, "description": event.description, "venue": event.venue.locationName})
     return JsonResponse({"events": events})
 
 """
