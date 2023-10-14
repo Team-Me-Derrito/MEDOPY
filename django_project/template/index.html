@@ -1,1 +1,21 @@
 <h1> test </h1>
+<h2>interest types</h2>
+{% for interest in types%}
+{{interest.interestType}} - {{interest.id}}<br>
+{% endfor %}
+<h2>projects</h2>
+{% for project in projects%}
+{{project.projectName}} - {{project.id}}<br>
+{% endfor %}
+<h2>venues</h2>
+{% for venue in venues%}
+{{venue.locationName}} - {{venue.id}}<br>
+{% endfor %}
+<h2>accounts</h2>
+{% for account in accounts%}
+{{account.accountName}} - {{account.id}}<br>
+{% endfor %}
+<h2>events</h2>
+{% for event in events%}
+{{event.name}} - {{event.id}}<br>
+{% endfor %}

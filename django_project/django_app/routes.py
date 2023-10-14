@@ -1,30 +1,13 @@
-from models import Event, Venue, Project, Account, AccountInterest, Ticket, Community
+from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community, DiscussionPost
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
-import json, re
-
-"""
-getEventsByAccount()
-    Gets all events for a particular accountToken and accountID with the right interestsType
-"""
-def getInterestEventsByAccount(accountToken, accountID):
-    account = Account.objects.get(id=accountID, token=accountToken)
-    projects = Project.objects.filter(community=account.community)
-    interests = AccountInterest.objects.filter(account=account)
-
-    events = []
-    for event in Event.objects.all():
-        if (event.project in projects) and (event.interestType in interests):
-            struct = {"eventID": event.id, "eventName": event.name}
-            events.append(struct)
-   
-    return events
+import json, re, queries
 
 """
 getInterestEvents()
     Gets all events that match the current account's community and interests.
-    Required request data: accountToken + accountID.
+    Required request data: token + account_id.
 """
 @csrf_exempt
 def getInterestEvents(request):
@@ -33,13 +16,13 @@ def getInterestEvents(request):
         data = json.loads(data)
         print("Getting interest events")
 
-        events = getInterestEventsByAccount(data["token"], data["account_id"])
+        events = queries.getInterestEventsByAccount(data["token"], data["account_id"])
         return JsonResponse({"events": events})
 
 """
 getEventInfo()
     Gets all necessary event info from the id for the event page.
-    Request data: eventID
+    Request data: event_id
 """
 @csrf_exempt    
 def getEventInfo(request):
@@ -48,7 +31,7 @@ def getEventInfo(request):
         data = json.loads(data)
         print("Getting event data")
 
-        event = Event.objects.get(id=data["eventID"])
+        event = Event.objects.get(id=data["event_id"])
         struct = {
             "project": event.project.projectName,
             "interestType": event.interestType.interestType,
@@ -98,7 +81,7 @@ def createAccount(request):
                              password=data["password"],
                              salt="blah",
                              token=createToken()
-                             )
+                            )
         newAccount.save()
         return HttpResponse("New account has been created")
 """
@@ -123,13 +106,21 @@ def getAllCommunityEvents(request):
 
         account = Account.objects.get(id=data["account_id"], token=data["token"])
         community = account.community
-        projects = Project.objects.filter(community=community)
         
-        events = []
-        for event in Event.objects.all():
-            if (event.project in projects):
-                events.append({"id": event.id, "name": event.name})
+        events = queries.getEventsByCommunty(community.id)
 
+        return JsonResponse({"events": events})
+
+"""
+getAllCommunityEventsDisplay()
+    Request: community_id
+"""    
+def getAllCommunityEventsDisplay(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        events = queries.getEventsByCommunty(data["community_id"])
         return JsonResponse({"events": events})
     
 """
@@ -142,19 +133,8 @@ def getUpcommingEvents(request):
         data = json.loads(data)
 
         account = Account.objects.get(id=data["account_id"], token=data["token"])
-        community = account.community
-        projects = Project.objects.filter(community=community)
-        curr_date = datetime.now().date()
-        end_date = curr_date + timedelta(days=30)
-        upcomming_events = Event.objects.filter(
-            startDateTime__date__range=(curr_date, end_date)
-        )
-        
-        events = []
-        for event in upcomming_events:
-            if (event.project in projects):
-                events.append({"id": event.id, "name": event.name})
-
+        community_id = account.community.id
+        events = queries.getNextMonthCommunityEvents(community_id)
         return JsonResponse({"events": events})
     
 """
@@ -167,13 +147,48 @@ def getTicketed(request):
         data = json.loads(data)
 
         account = Account.objects.get(id=data["account_id"], token=data["token"])
-        account_tickets = Ticket.objects.filter(account=account)
-
-        events = []
-        for ticket in account_tickets:
-            events.append({"id": ticket.event.id, "name": ticket.event.name})
+        events = queries.getTicketedEvents(account)
 
         return JsonResponse({"events": events})
+    
+"""
+getDiscussionPosts()
+    Gets all the discussion posts for the users community
+"""
+def getDiscussionPosts(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+
+        posts = []
+        for post in DiscussionPost.objects.all():
+            if post.community == community:
+                posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
+
+        return JsonResponse({"posts":posts})
+    
+"""
+newDiscussionPost()
+    User can create a new post one the discussion board
+"""
+def newDiscussionPost(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        community = account.community
+
+        post = DiscussionPost(
+            community=community,
+            account=account,
+            timestamp=datetime.now(),
+            text=data["post_text"]
+            )
+        post.save()
     
 def searchEvents(request):
     if request.method == "POST":
@@ -220,3 +235,84 @@ def distanceBetween(gps1, gps2):
     longitude = gps1["longitude"] - gps2["longitude"]
     latitude = gps1["latitude"] - gps2["latitude"]
     return ((longitude ** 2 + latitude ** 2) ** 0.5)
+
+"""
+getCommunityInfo()
+    request: data["community_id]
+"""
+def getCommunityInfo(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        community = Community.objects.get(id=data["community_id"])
+
+        community_info = {"community_name": community.communityName} #TODO coordinate
+        return JsonResponse(community_info)
+    
+
+"""
+getProjectsInCommunity()
+    request: data["community_id"]
+"""
+def getProjectsInCommunity(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        community = Community.objects.get(id=data["community_id"])
+
+        projects = []
+        for project in Project.objects.all():
+            if project.community == community:
+                project_stuct = {
+                    "project_name": project.projectName,
+                    "project_description": project.description,
+                    "project_start": project.startDate,
+                    "project_end": project.endDate
+                }
+        return JsonResponse(projects)
+    
+"""
+getCommunityInterests()
+    request: data["community_id"]
+"""
+def getCommunityInterests(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        community = Community.objects.get(id=data["community_id"])
+
+        communityInterests = {}
+        for accountInterest in AccountInterest.objects.all():
+            if accountInterest.account.community == community:
+                if accountInterest in communityInterests:
+                    communityInterests[accountInterest] += 1
+                else:
+                    communityInterests[accountInterest] = 1
+
+        return JsonResponse(communityInterests)
+    
+"""
+getCommunityPosts()
+    request: data["community_id"]
+    returns the last 50 posts
+"""
+def getCommunityPosts(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        community = Community.objects.get(id=data["community_id"])
+
+        posts = []
+        for post in DiscussionPost.objects.all():
+            if post.account.community == community:
+                posts.append({
+                    "poster_account": post.account.accountName,
+                    "post_timestamp": post.timestamp,
+                    "post": post.text
+                })
+
+        return JsonResponse(posts[-50])
