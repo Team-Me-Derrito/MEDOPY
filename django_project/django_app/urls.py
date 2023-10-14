@@ -9,6 +9,9 @@ urlpatterns = [
     path("api/events/upcoming", routes.getUpcommingEvents),
     path("api/events/search", routes.searchEvents),
     path("api/events/community", routes.getAllCommunityEvents),
+    path("api/accounts/create", routes.createAccount),
     path("api/display/community", routes.getCommunityInfo),
-    path("api/accounts/create", routes.createAccount)
+    path("api/display/interests", routes.getCommunityInterests),
+    path("api/display/projects)", routes.getProjectsInCommunity),
+    path("api/display/info", routes.getCommunityInfo)
 ]
