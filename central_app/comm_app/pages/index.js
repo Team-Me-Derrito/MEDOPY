@@ -2,6 +2,7 @@ import React from "react";
 import MapSection from "@/components/MapSection";
 import GameSection from "@/components/GameSection";
 
+
 //Todo:
 //Pull data from backend
 //Function to generate scores and resize grid
@@ -10,74 +11,19 @@ import GameSection from "@/components/GameSection";
 //Clickable Icons
 //Use a dictionary
 
-const scores0 = [
-    3, 0, 0,
-  0, 1, 2, 0,
- 1, 3, 3, 2, 0,
-  3, 4, 3, 1,
- 2, 5, 4, 4, 2,
-  3, 4, 5, 2,
- 1, 1, 3, 3, 1,
-  0, 2, 1, 2,
-   0, 0, 0
-];
 
-const scores1 = [
-   0, 0, 0,
-  0, 0, 3, 0,
- 0, 0, 1, 2, 0,
-  0, 2, 1, 0,
- 0, 4, 3, 5, 0,
-  1, 1, 2, 0,
- 0, 1, 2, 1, 0,
-  0, 3, 0, 0,
-   0, 0, 0
-];
+import { SCORE_0, SCORE_1, SCORE_2 } from "@/public/constants/ExampleData.js";
+import { getAllEvents } from './api/DataRequest.js'
 
-const scores2 = [
-  5, 5, 5, 5, 5, 5, 5, 5, 
-  4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4,
-  3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-];
+//Implement Banner to display community name and health
 
 export default function Home() {
+  // var test = getAllEvents();
+  // console.log(test)
+
   return (
     <div> 
-      <GameSection scores={scores0} isize={6}/>
+      <GameSection scores={SCORE_1} isize={6}/>
       <MapSection />
     </div>
   );

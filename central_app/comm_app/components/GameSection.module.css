@@ -1,16 +1,44 @@
 /* Game Elements */
 .game-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 0px solid black;
-  }
-  
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 0px solid black;
+}
+
+.game-banner-container {
+  position: absolute;
+  width: 30%;
+  height: 22.3%;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  z-index: 2;
+  background-image: url('/images/WoodenSign.png');
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+.game-banner {
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  top: 63%;
+  transform: translate(-50%, -50%);
+  font-family: Arial, sans-serif;
+  color: #204811;
+  font-size: 170%;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
 .canvas-container {
-    width: 100%;
-    height: 100vh;
-    border: 1px solid #000;
-    background-color: white;
-    position: relative;
+  width: 100%;
+  height: 100vh;
+  border: 1px solid #000;
+  background-color: white;
+  position: relative;
 }

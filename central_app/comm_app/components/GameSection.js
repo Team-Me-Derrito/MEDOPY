@@ -1,34 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import styles from './GameSection.module.css'
 import { generatePerlinNoise } from 'perlin-noise'
+import { IMAGE_SOURCES } from '@/public/constants/ImagePaths';
 
-const imgSource = [
-    '/images/GameImages/Tile1.png',
-
-    '/images/GameImages/G01.png',
-    '/images/GameImages/G11.png',
-    '/images/GameImages/G21.png',
-    '/images/GameImages/G31.png',
-    '/images/GameImages/G41.png',
-
-    '/images/GameImages/I01.png',
-    '/images/GameImages/I11.png',
-    '/images/GameImages/I21.png',
-    '/images/GameImages/I31.png',
-    '/images/GameImages/I41.png',
-
-    '/images/GameImages/F01.png',
-    '/images/GameImages/F11.png',
-    '/images/GameImages/F21.png',
-    '/images/GameImages/F31.png',
-    '/images/GameImages/F41.png',
-
-    '/images/GameImages/P01.png',
-    '/images/GameImages/P11.png',
-    '/images/GameImages/P21.png',
-    '/images/GameImages/P31.png',
-    '/images/GameImages/P41.png',
-];
+//Improve game banner
 
 export default function GameSection({ scores, isize }) {
     //Determine rows based on number of scores?
@@ -41,19 +16,24 @@ export default function GameSection({ scores, isize }) {
 
     return (
         <div className={styles['game-container']}>
-            <GameBanner changeTheme={changeTheme} changeSize={changeSize} />
+            <div className={styles['game-banner-container']}>
+                <GameBanner changeTheme={changeTheme} changeSize={changeSize} />
+            </div>
             <GameDisplay scores={scores} theme={theme} rowSize={rowSize} />
+            <div className={styles['game-button-container']}>
+                <button onClick={() => changeTheme()}>Change Theme</button>
+                <button onClick={() => changeSize(1)}>incSize</button>
+                <button onClick={() => changeSize(-1)}>DecSize</button>
+            </div>
         </div>
     );
 }
 
-function GameBanner({ changeTheme, changeSize }) {
+function GameBanner({ }) {
     return (
-        <h2>Community Display Game
-            <button onClick={() => changeTheme()}>Change Theme</button>
-            <button onClick={() => changeSize(1)}>incSize</button>
-            <button onClick={() => changeSize(-1)}>DecSize</button>
-        </h2>
+        <div className={styles['game-banner']}>
+            <h2>Community Display</h2>
+        </div>
     )
 }
 
@@ -74,7 +54,7 @@ function GameDisplay({ scores, theme, rowSize }) {
 
     const canvasRef = useRef(null);
     useEffect(() => {
-        const images = imgSource.map((src, index) => {
+        const images = IMAGE_SOURCES.map((src, index) => {
             const image = new Image();
             image.src = src;
             image.onload = () => {
@@ -157,7 +137,7 @@ function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores
 
 function permuteScores(scores, n, m) {
     //Array to generate random noise in 2d grid
-    const arr = generatePerlinNoise(m, n, { octaveCount: 2, persistence: 0.02 });
+    const arr = generatePerlinNoise(m, n, { octaveCount: 2, persistence: 0.02 })
 
     //Sort noise based on value and stores original index
     const indexedArray = arr.map((value, index) => ({ value, index }));
