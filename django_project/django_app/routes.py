@@ -17,7 +17,7 @@ def getInterestEvents(request):
         data = json.loads(data)
         print("Getting interest events")
 
-        events = queries.getInterestEventsByAccount(data["token"], data["account_id"])
+        events = queries.getInterestEventsByAccount(data["Token"], data["account_id"])
         return JsonResponse({"events": events})
 
 """
@@ -65,20 +65,21 @@ def createAccount(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
 
-        community = Community.objects.get(pk=data["communityID"])
+        community = Community.objects.get(pk=data["community_id"])
+        token = security.generateToken()
 
         newAccount = Account(community=community, 
-                             accountName=data["accountName"],
-                             age=data["age"],
-                             gender=data["gender"],
-                             phoneNumber=data["phoneNumber"],
-                             email=data["email"],
-                             password=data["password"],
+                             accountName=data["AccountName"],
+                             birthday=data["Birthday"],
+                             gender=data["Gender"],
+                             phoneNumber=data["PhoneNumber"],
+                             email=data["Email"],
+                             password=data["Password"],
                              salt="blah",
-                             token=security.generateToken()
+                             token=token
                             )
         newAccount.save()
-        return HttpResponse("New account has been created")
+        return JsonResponse({"account_id": newAccount.pk, "token": token})
 """
 getAllEvents()
     Returns all the events in the database
@@ -100,7 +101,7 @@ def getAllCommunityEvents(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(pk=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         community = account.community
         
         events = queries.getEventsByCommunty(community.id)
@@ -130,7 +131,7 @@ def getUpcommingEvents(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(pk=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         community_id = account.community.id
         events = queries.getNextMonthCommunityEvents(community_id)
         return JsonResponse({"events": events})
@@ -160,7 +161,7 @@ def getDiscussionPosts(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        #account = Account.objects.get(pk=data["account_id"], token=data["token"])
+        #account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         #community = account.community
 
         communityid = Community.objects.get(pk=2)
@@ -197,7 +198,7 @@ def searchEvents(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(pk=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         community = account.community
         projects = Project.objects.filter(community=community)
 
@@ -343,8 +344,8 @@ def login(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        password_hashed = security.hash(data["password"], queries.getSalt(data["username"]))
-        response = queries.verify(data["email"], password_hashed)
+        password_hashed = security.hash(data["Password"], queries.getSalt(data["Password"]))
+        response = queries.verify(data["Email"], password_hashed)
 
         if response["token"] is not None:
             login = {"sucess": True, "account_id": response["account_id"], "token": response["token"]}
@@ -379,7 +380,8 @@ def getAccountInfo(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        result = queries.getAccountInfo(data["account_id"], data["token"])
+        #result = queries.getAccountInfo(data["account_id"], data["Token"])
+        result = queries.getAccountInfo(1, "laksdjfsldfkj")
         return JsonResponse(result)
     
 """
@@ -394,3 +396,15 @@ def joinEvent(request):
 
         result = queries.joinEvent(data["account_id"], data["token"], data["event_id"])
         return JsonResponse(result)
+    
+"""
+getCommunities()
+    request:
+"""
+@csrf_exempt
+def getCommunities(request):
+    communities = []
+    for community in Community.objects.all():
+        communities.append({"community_name": community.communityName, "community_id":community.pk})
+
+    return JsonResponse({"communities": communities})
