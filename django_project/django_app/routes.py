@@ -94,6 +94,7 @@ def getAllEvents(request):
 getAllCommuntiyEvents()
     Returns all the events of an account's community.
 """
+@csrf_exempt
 def getAllCommunityEvents(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -109,7 +110,8 @@ def getAllCommunityEvents(request):
 """
 getAllCommunityEventsDisplay()
     Request: community_id
-"""    
+""" 
+@csrf_exempt   
 def getAllCommunityEventsDisplay(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -122,6 +124,7 @@ def getAllCommunityEventsDisplay(request):
 getUpcommingEvents()
     Returns all events in the next month.
 """
+@csrf_exempt
 def getUpcommingEvents(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -136,6 +139,7 @@ def getUpcommingEvents(request):
 getTicketed()
     Gets all event ids of an accounts upcomming ticketed events.
 """
+@csrf_exempt
 def getTicketed(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -207,6 +211,7 @@ def searchEvents(request):
 """
 Get the 20 closest events to the given current_gps.
 """
+@csrf_exempt
 def getCloseEvents(current_gps):
     events = Event.objects.all()
     event_venues = Venue.objects.all()
@@ -229,6 +234,7 @@ def getCloseEvents(current_gps):
 """
 Function to find distance between 2 gps objects.
 """
+@csrf_exempt
 def distanceBetween(gps1, gps2):
     longitude = gps1["longitude"] - gps2["longitude"]
     latitude = gps1["latitude"] - gps2["latitude"]
@@ -238,6 +244,7 @@ def distanceBetween(gps1, gps2):
 getCommunityInfo()
     request: data["community_id]
 """
+@csrf_exempt
 def getCommunityInfo(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -253,6 +260,7 @@ def getCommunityInfo(request):
 getProjectsInCommunity()
     request: data["community_id"]
 """
+@csrf_exempt
 def getProjectsInCommunity(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -276,6 +284,7 @@ def getProjectsInCommunity(request):
 getCommunityInterests()
     request: data["community_id"]
 """
+@csrf_exempt
 def getCommunityInterests(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -298,6 +307,7 @@ getCommunityPosts()
     request: data["community_id"]
     returns the last 50 posts
 """
+@csrf_exempt
 def getCommunityPosts(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -327,6 +337,7 @@ login()
         token: token
     }
 """
+@csrf_exempt
 def login(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -346,6 +357,7 @@ def login(request):
 createPost()
     request: data["account_id", "token", "message"]
 """
+@csrf_exempt
 def createPost(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -361,6 +373,7 @@ def createPost(request):
 getAccountInfo()
     request: data["account_id", "token"]
 """
+@csrf_exempt
 def getAccountInfo(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -373,6 +386,7 @@ def getAccountInfo(request):
 joinEvent()
     request: data["account_id", "token", "event_id"]
 """
+@csrf_exempt
 def joinEvent(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
