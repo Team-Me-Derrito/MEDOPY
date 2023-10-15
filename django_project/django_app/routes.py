@@ -159,11 +159,10 @@ def getDiscussionPosts(request):
         community = account.community
 
         posts = []
-        for post in DiscussionPost.objects.all():
-            if post.community == community:
-                posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
+        for post in DiscussionPost.objects.filter(community=community):
+            posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
 
-        return JsonResponse({"posts":posts})
+        return JsonResponse({"posts": posts})
     
 """
 newDiscussionPost()
@@ -261,6 +260,7 @@ def getProjectsInCommunity(request):
         for project in Project.objects.all():
             if project.community == community:
                 project_stuct = {
+                    "project_id": project.id,
                     "project_name": project.projectName,
                     "project_description": project.description,
                     "project_start": project.startDate,
@@ -347,8 +347,33 @@ def createPost(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        queries.createPost(data["account_id"], data["token"], data["message"])
+        result = queries.createPost(data["account_id"], data["token"], data["message"])
+        return JsonResponse(result)
 
-# post making
 
 # join event
+
+# get account info
+"""
+getAccountInfo()
+    request: data["account_id", "token"]
+"""
+def getAccountInfo(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        result = queries.getAccountInfo(data["account_id"], data["token"])
+        return JsonResponse(result)
+    
+"""
+joinEvent()
+    request: data["account_id", "token", "event_id"]
+"""
+def joinEvent(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        result = queries.joinEvent(data["account_id"], data["token"], data["event_id"])
+        return JsonResponse(result)

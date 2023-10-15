@@ -15,5 +15,6 @@ urlpatterns = [
     path("api/display/posts", routes.getCommunityPosts),
     path("api/display/interests", routes.getCommunityInterests),
     path("api/display/projects)", routes.getProjectsInCommunity),
-    path("api/display/info", routes.getCommunityInfo)
+    path("api/display/info", routes.getCommunityInfo),
+    path("api/account/post", routes.createPost)
 ]

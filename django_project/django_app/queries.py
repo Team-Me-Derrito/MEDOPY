@@ -1,4 +1,4 @@
-from .models import Account, Project, AccountInterest, Event, Ticket, Community
+from .models import Account, Project, AccountInterest, Event, Ticket, Community, DiscussionPost
 from datetime import datetime, timedelta
 from . import security
 
@@ -92,4 +92,33 @@ def verify(email, password_hashed):
     
 
 def createPost(account_id, token, message):
-    return
+    account = Account.objects.get(id=account_id, token=token)
+
+    post = DiscussionPost(community=account.community, account=account, timestamp=datetime.now(), text=message)
+    post.save()
+    return {"success": True}
+
+def getAccountInfo(account_id, token):
+    account = Account.objects.get(id=account_id, token=token)
+
+    interests = []
+    for interest in AccountInterest.objects.filter(id=account_id):
+        interests.append({"interest": interest.interestType.interestType})
+
+    info = {
+        "community": account.community.communityName,
+        "name": account.accountName,
+        "birthday": account.birthday,
+        "gender": account.gender,
+        "phoneNumber": account.phoneNumber,
+        "email": account.email,
+        "interests": interests
+    }
+    return info
+
+def joinEvent(account_id, token, event_id):
+    account = Account.objects.get(id=account_id, token=token)
+    event = Event.objects.get(id=event_id)
+    ticket = Ticket(account=account, event=event)
+    ticket.save()
+    return {"success": True}
