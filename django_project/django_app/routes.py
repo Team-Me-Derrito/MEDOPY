@@ -158,7 +158,7 @@ def getDiscussionPosts(request):
         account = Account.objects.get(id=data["account_id"], token=data["token"])
         community = account.community
 
-        communityid = Community.objects.get(id=2)
+        communityid = Community.objects.get(pk=2)
         posts = []
         for post in DiscussionPost.objects.filter(community=communityid):
             posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
@@ -352,7 +352,6 @@ def createPost(request):
         return JsonResponse(result)
 
 
-# join event
 
 # get account info
 """
