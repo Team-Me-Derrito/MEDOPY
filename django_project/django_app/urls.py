@@ -22,6 +22,12 @@ urlpatterns = [
 
     #community
     path("api/community/posts", routes.getDiscussionPosts),
+    path("api/community/fetch", routes.getCommunities),
+
+    #fetching
+    path("api/venues/fetch", routes.getVenues),
+    path("api/interests/fetch", routes.getInterestTypes),
+    path("api/projects/fetch", routes.getProjects),
     
     
     #display

@@ -1,4 +1,4 @@
-from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community, DiscussionPost
+from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community, DiscussionPost, InterestType
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
@@ -423,3 +423,61 @@ def createEvent(request):
         return JsonResponse(result)
     
 
+"""
+ getVenues()
+    request:
+ """
+@csrf_exempt
+def getVenues(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        venues = []
+        for venue in Venue.objects.all():
+            venues.append({
+                "venue_id": venue.pk,
+                "venue_name": venue.locationName,
+                "address": venue.address,
+                "capacity": venue.capacity,
+                "gps_longitude": venue.gpsLongitude,
+                "gps_latitude": venue.gpsLatitude
+            })
+        return JsonResponse({"venues": venues})
+    
+"""
+getInterestTypes()
+"""
+@csrf_exempt
+def getInterestTypes(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        interests = []
+        for interest in InterestType.objects.all():
+            interests.append({
+                "interest_id": interest.pk,
+                "interest": interest.interestType
+            })
+
+        return JsonResponse({"interests": interests})
+    
+"""
+getProjects()
+"""
+@csrf_exempt
+def getProjects(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        projects = []
+        for project in Project.objects.all():
+            projects.append({
+                "project_id": project.pk,
+                "project_name": project.projectName,
+                "description": project.description
+            })
+
+        return JsonResponse({"projects": projects})
