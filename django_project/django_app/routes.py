@@ -150,6 +150,7 @@ def getTicketed(request):
 getDiscussionPosts()
     Gets all the discussion posts for the users community
 """
+@csrf_exempt
 def getDiscussionPosts(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -169,6 +170,7 @@ def getDiscussionPosts(request):
 newDiscussionPost()
     User can create a new post one the discussion board
 """
+@csrf_exempt
 def newDiscussionPost(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -184,7 +186,8 @@ def newDiscussionPost(request):
             text=data["post_text"]
             )
         post.save()
-    
+
+@csrf_exempt  
 def searchEvents(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
