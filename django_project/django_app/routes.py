@@ -32,7 +32,7 @@ def getEventInfo(request):
         data = json.loads(data)
         print("Getting event data")
 
-        event = Event.objects.get(id=data["event_id"])
+        event = Event.objects.get(pk=data["event_id"])
         struct = {
             "project": event.project.projectName,
             "eventName": event.name,
@@ -65,7 +65,7 @@ def createAccount(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
 
-        community = Community.objects.get(id=data["communityID"])
+        community = Community.objects.get(pk=data["communityID"])
 
         newAccount = Account(community=community, 
                              accountName=data["accountName"],
@@ -99,7 +99,7 @@ def getAllCommunityEvents(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["token"])
         community = account.community
         
         events = queries.getEventsByCommunty(community.id)
@@ -127,7 +127,7 @@ def getUpcommingEvents(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["token"])
         community_id = account.community.id
         events = queries.getNextMonthCommunityEvents(community_id)
         return JsonResponse({"events": events})
@@ -141,7 +141,7 @@ def getTicketed(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["token"])
         events = queries.getTicketedEvents(account)
 
         return JsonResponse({"events": events})
@@ -155,8 +155,8 @@ def getDiscussionPosts(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(id=data["account_id"], token=data["token"])
-        community = account.community
+        #account = Account.objects.get(pk=data["account_id"], token=data["token"])
+        #community = account.community
 
         communityid = Community.objects.get(pk=2)
         posts = []
@@ -174,7 +174,7 @@ def newDiscussionPost(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["token"])
         community = account.community
 
         post = DiscussionPost(
@@ -190,7 +190,7 @@ def searchEvents(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        account = Account.objects.get(id=data["account_id"], token=data["token"])
+        account = Account.objects.get(pk=data["account_id"], token=data["token"])
         community = account.community
         projects = Project.objects.filter(community=community)
 
@@ -240,7 +240,7 @@ def getCommunityInfo(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        community = Community.objects.get(id=data["community_id"])
+        community = Community.objects.get(pk=data["community_id"])
 
         community_info = {"community_name": community.communityName} #TODO coordinate
         return JsonResponse(community_info)
@@ -255,7 +255,7 @@ def getProjectsInCommunity(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        community = Community.objects.get(id=data["community_id"])
+        community = Community.objects.get(pk=data["community_id"])
 
         projects = []
         for project in Project.objects.all():
@@ -278,7 +278,7 @@ def getCommunityInterests(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        community = Community.objects.get(id=data["community_id"])
+        community = Community.objects.get(pk=data["community_id"])
 
         communityInterests = {}
         for accountInterest in AccountInterest.objects.all():
@@ -300,7 +300,7 @@ def getCommunityPosts(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        community = Community.objects.get(id=data["community_id"])
+        community = Community.objects.get(pk=data["community_id"])
 
         posts = []
         for post in DiscussionPost.objects.all():
