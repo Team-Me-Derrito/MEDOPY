@@ -1,4 +1,4 @@
-from .models import Account, Project, AccountInterest, Event, Ticket, Community, DiscussionPost
+from .models import Account, Project, AccountInterest, Event, Ticket, Community, DiscussionPost, InterestType, Venue
 from datetime import datetime, timedelta
 from . import security
 
@@ -116,9 +116,34 @@ def getAccountInfo(account_id, token):
     }
     return info
 
-def joinEvent(account_id, token, event_id):
+def joinEvent(account_id, token, event_id, ticketed):
     account = Account.objects.get(id=account_id, token=token)
     event = Event.objects.get(id=event_id)
-    ticket = Ticket(account=account, event=event)
-    ticket.save()
-    return {"success": True}
+    if ticketed:
+        ticket = Ticket(account=account, event=event)
+        ticket.save()
+        return {"success": True}
+    else:
+        ticket = Ticket.objects.get(account=account, event=event)
+        ticket.delete()
+        return {"success": True}
+
+def createEvent(project_id, interestType_id, venue_id, startDateTime, duration, price, name, description, account_id, token):
+    project = Project.objects.get(pk=project_id)
+    interestType = InterestType.objects.get(pk=interestType_id)
+    venue = Venue.objects.get(pk=venue_id)
+    creator = Account.objects.get(pk=account_id, token=token)
+
+    event = Event(
+        project=project,
+        interestType=interestType,
+        venue=venue,
+        startDateTime=startDateTime,
+        duration=duration,
+        price=price,
+        name=name,
+        description=description,
+        creator=creator
+    )
+    event.save()
+    return({"event_id": event.id})

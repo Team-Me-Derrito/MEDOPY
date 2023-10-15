@@ -394,7 +394,7 @@ def joinEvent(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        result = queries.joinEvent(data["account_id"], data["token"], data["event_id"])
+        result = queries.joinEvent(data["account_id"], data["token"], data["event_id"], data["ticketed"])
         return JsonResponse(result)
     
 """
@@ -408,3 +408,18 @@ def getCommunities(request):
         communities.append({"community_name": community.communityName, "community_id":community.pk})
 
     return JsonResponse({"communities": communities})
+
+"""
+createEvent()
+request: data[""]
+"""
+@csrf_exempt
+def createEvent(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        result = queries.createEvent()
+        return JsonResponse(result)
+    
+
