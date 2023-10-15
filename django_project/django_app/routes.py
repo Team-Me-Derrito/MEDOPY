@@ -347,7 +347,7 @@ def createPost(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        queries.createPost(data["account_id", ])
+        queries.createPost(data["account_id"], data["token"], data["message"])
 
 # post making
 

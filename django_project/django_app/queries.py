@@ -89,3 +89,7 @@ def verify(email, password_hashed):
         return {"account_id": account.id, "token":token}
     else:
         return None
+    
+
+def createPost(account_id, token, message):
+    return
