@@ -158,8 +158,9 @@ def getDiscussionPosts(request):
         account = Account.objects.get(id=data["account_id"], token=data["token"])
         community = account.community
 
+        communityid = Community.objects.get(id=2)
         posts = []
-        for post in DiscussionPost.objects.filter(community=community):
+        for post in DiscussionPost.objects.filter(community=communityid):
             posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
 
         return JsonResponse({"posts": posts})
