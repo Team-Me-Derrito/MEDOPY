@@ -1,5 +1,6 @@
 from .models import Account, Project, AccountInterest, Event, Ticket, Community
 from datetime import datetime, timedelta
+from . import security
 
 """
 getInterestEventsByAccount()
@@ -71,3 +72,20 @@ def getTicketedEvents(account):
     for ticket in Ticket.objects.filter(account=account):
         events.append({"id": ticket.event.id, "name": ticket.event.name})
     return events
+
+
+def getSalt(email):
+    if Account.objects.get(email=email).exists():
+        return Account.objects.get(email=email).salt
+    
+
+def verify(email, password_hashed):
+    account = Account.objects.get(email=email, password=password_hashed)
+    if account.exists():
+        token = security.generateToken()
+        account.token = token
+        account.save()
+
+        return {"account_id": account.id, "token":token}
+    else:
+        return None

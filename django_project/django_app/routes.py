@@ -3,7 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import json, re
-from . import queries
+from . import queries, security
 
 """
 getInterestEvents()
@@ -35,6 +35,7 @@ def getEventInfo(request):
         event = Event.objects.get(id=data["event_id"])
         struct = {
             "project": event.project.projectName,
+            "eventName": event.name,
             "interestType": event.interestType.interestType,
             "venue": event.venue.locationName,
             "address": event.venue.address,
@@ -47,13 +48,6 @@ def getEventInfo(request):
             }
 
         return JsonResponse(struct)
-
-"""
-createToken()
-    Used to create a session token.... TODO
-"""
-def createToken():
-    return
 
 """
 createSalt()
@@ -81,7 +75,7 @@ def createAccount(request):
                              email=data["email"],
                              password=data["password"],
                              salt="blah",
-                             token=createToken()
+                             token=security.generateToken()
                             )
         newAccount.save()
         return HttpResponse("New account has been created")
@@ -317,3 +311,44 @@ def getCommunityPosts(request):
                 })
 
         return JsonResponse(posts[-50])
+    
+"""
+login()
+    request: data["email", "password"]
+
+    return:
+    {
+        success: true/false,
+        account_id: id,
+        token: token
+    }
+"""
+def login(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        password_hashed = security.hash(data["password"], queries.getSalt(data["username"]))
+        response = queries.verify(data["email"], password_hashed)
+
+        if response["token"] is not None:
+            login = {"sucess": True, "account_id": response["account_id"], "token": response["token"]}
+        else:
+            login = {"success": False}
+    return login
+
+
+"""
+createPost()
+    request: data["account_id", "token", "message"]
+"""
+def createPost(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        queries.createPost(data["account_id", ])
+
+# post making
+
+# join event
