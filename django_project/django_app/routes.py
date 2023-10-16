@@ -486,8 +486,9 @@ def getAttendance(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-
+        print("data is", data)
         event = Event.objects.get(pk=data["event_id"])
+
         account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         ticketedEvents = Ticket.objects.filter(event=event, account=account)
 
