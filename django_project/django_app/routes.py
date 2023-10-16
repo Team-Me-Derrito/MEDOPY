@@ -481,3 +481,17 @@ def getProjects(request):
             })
 
         return JsonResponse({"projects": projects})
+
+"""
+getAttendance()
+    request: data["event_id]
+"""
+@csrf_exempt
+def getAttendance(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        events = Event.objects.filter(pk=data["event_id"])
+
+        return JsonResponse({"attendance": events})
