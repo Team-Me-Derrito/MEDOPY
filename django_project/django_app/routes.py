@@ -491,7 +491,7 @@ def getAttendance(request):
         account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         ticketedEvents = Ticket.objects.filter(event=event, account=account)
 
-        if len(ticketedEvents) > 0:
+        if len(ticketedEvents) > 0: #found at least one ticket for this account for this event
             return JsonResponse({"attendance": True})
         else:
             return JsonResponse({"attendance": False})
