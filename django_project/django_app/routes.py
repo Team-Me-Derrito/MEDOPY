@@ -84,7 +84,7 @@ def createAccount(request):
             interestObj = InterestType.objects.get(pk=interest)
             accountInterest = AccountInterest(account=newAccount, interestType=interestObj)
             accountInterest.save()
-            
+
         return JsonResponse({"account_id": newAccount.pk, "token": token})
 """
 getAllEvents()
@@ -390,18 +390,6 @@ def getAccountInfo(request):
         result = queries.getAccountInfo(1, "laksdjfsldfkj")
         return JsonResponse(result)
     
-"""
-joinEvent()
-    request: data["account_id", "token", "event_id"]
-"""
-@csrf_exempt
-def joinEvent(request):
-    if request.method == "POST":
-        data = request.body.decode("utf-8")
-        data = json.loads(data)
-
-        result = queries.joinEvent(data["account_id"], data["token"], data["event_id"], data["ticketed"])
-        return JsonResponse(result)
     
 """
 getCommunities()
@@ -499,9 +487,14 @@ def getAttendance(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        events = Event.objects.filter(pk=data["event_id"])
+        event = Event.objects.get(pk=data["event_id"])
 
-        return JsonResponse({"attendance": len(events)})
+        ticketedEvents = queries.getTicketedEvents()
+
+        if event in ticketedEvents:
+            return JsonResponse({"attendance": True})
+        else:
+            return JsonResponse({"attendance": False})
 
 
 """
@@ -518,6 +511,6 @@ def setAttendance(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        events = Event.objects.filter(pk=data["event_id"])
+        result = queries.joinEvent(data["account_id"], data["Token"], data["event_id"], data["event_ticket"])
 
-        return JsonResponse({"attendance": len(events)})
+        return JsonResponse(result)

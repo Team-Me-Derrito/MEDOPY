@@ -75,7 +75,7 @@ def getTicketedEvents(account):
 
 
 def getSalt(email):
-    if Account.objects.get(email=email).exists():
+    if Account.objects.get(email=email):
         return Account.objects.get(email=email).salt
     
 
