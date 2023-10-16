@@ -502,3 +502,22 @@ def getAttendance(request):
         events = Event.objects.filter(pk=data["event_id"])
 
         return JsonResponse({"attendance": len(events)})
+
+
+"""
+getAttendance()
+    request: data["event_id]
+
+
+
+    For charlotte
+"""
+@csrf_exempt
+def setAttendance(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+
+        events = Event.objects.filter(pk=data["event_id"])
+
+        return JsonResponse({"attendance": len(events)})
