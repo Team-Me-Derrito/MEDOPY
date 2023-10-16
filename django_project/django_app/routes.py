@@ -350,18 +350,18 @@ def login(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        salt = queries.getSalt(data["Password"])
+        salt = queries.getSalt(data["Email"])
         if salt is not None:
             password_hashed = security.hash(data["Password"], queries.getSalt(data["Email"]))
             response = queries.verify(data["Email"], password_hashed)
         else:
-            return {"success": False}
+            return JsonResponse({"success": False})
 
         if response is not None:
             login = {"sucess": True, "account_id": response["account_id"], "token": response["token"]}
         else:
             login = {"success": False}
-    return login
+    return JsonResponse(login)
 
 
 """

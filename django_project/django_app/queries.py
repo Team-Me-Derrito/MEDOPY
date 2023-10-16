@@ -128,6 +128,7 @@ def joinEvent(account_id, token, event_id, ticketed):
         ticket.save()
         return {"success": True}
     else:
+        ## fix when get returns nothing
         ticket = Ticket.objects.get(account=account, event=event)
         ticket.delete()
         return {"success": True}
