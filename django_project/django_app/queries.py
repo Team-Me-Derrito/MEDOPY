@@ -70,7 +70,7 @@ def getNextMonthCommunityEvents(community_id):
 def getTicketedEvents(account):
     events = []
     for ticket in Ticket.objects.filter(account=account):
-        events.append({"id": ticket.event.id, "name": ticket.event.name, "account_id": ticket.account.id})
+        events.append({"event_id": ticket.event.id, "name": ticket.event.name, "account_id": ticket.account.id})
     return events
 
 
