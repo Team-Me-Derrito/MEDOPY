@@ -79,6 +79,12 @@ def createAccount(request):
                              token=token
                             )
         newAccount.save()
+
+        for interest in data["interestTypes"]:
+            interestObj = InterestType.objects.get(pk=interest)
+            accountInterest = AccountInterest(account=newAccount, interestType=interestObj)
+            accountInterest.save()
+            
         return JsonResponse({"account_id": newAccount.pk, "token": token})
 """
 getAllEvents()
