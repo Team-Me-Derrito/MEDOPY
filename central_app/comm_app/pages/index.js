@@ -19,7 +19,7 @@ import { getAllEvents } from './api/DataRequest.js'
 
 export default function Home() {
   // var test = getAllEvents();
-  // console.log(test)
+  // console.log(test);
 
   return (
     <div> 

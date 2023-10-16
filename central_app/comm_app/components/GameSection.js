@@ -4,26 +4,24 @@ import { generatePerlinNoise } from 'perlin-noise'
 import { IMAGE_SOURCES } from '@/public/constants/ImagePaths';
 
 //Improve game banner
-
 export default function GameSection({ scores, isize }) {
-    //Determine rows based on number of scores?
-
     const [theme, setTheme] = React.useState(0);
     const [rowSize, setRowSize] = React.useState(isize * 2 + 1);
 
-    function changeTheme() { setTheme((theme + 1) % 4); }
-    function changeSize(change) { setRowSize(rowSize + 2 * change) }
+    function changeTheme(change) { setTheme((theme + change + 4) % 4); }
+    function changeSize(change) { setRowSize((rowSize + 2 * change + 100) % 100 )}
 
     return (
         <div className={styles['game-container']}>
             <div className={styles['game-banner-container']}>
-                <GameBanner changeTheme={changeTheme} changeSize={changeSize} />
+                <GameBanner />
             </div>
             <GameDisplay scores={scores} theme={theme} rowSize={rowSize} />
             <div className={styles['game-button-container']}>
-                <button onClick={() => changeTheme()}>Change Theme</button>
-                <button onClick={() => changeSize(1)}>incSize</button>
-                <button onClick={() => changeSize(-1)}>DecSize</button>
+                <button className={styles['b1']} onClick={() => changeTheme(-1)}>⬅</button>
+                <button className={styles['b2']} onClick={() => changeTheme(1)}>➡</button>
+                <button className={styles['b3']} onClick={() => changeSize(1)}>+</button>
+                <button className={styles['b4']} onClick={() => changeSize(-1)}>-</button>
             </div>
         </div>
     );
@@ -81,8 +79,6 @@ function GameDisplay({ scores, theme, rowSize }) {
     return (
         <div className={styles['canvas-container']}>
             <canvas ref={canvasRef} />
-            {/* Temp Button (Use tab) */}
-            <button onClick={() => updateColSize(colSize, true)}>Change Theme</button>
         </div>
     );
 }
@@ -150,10 +146,11 @@ function permuteScores(scores, n, m) {
     //Place sorted into index array at index
     const sortedScores = scores.sort()
     const scoreArray = integerArray.map(indexAtIndex => sortedScores[indexAtIndex % sortedScores.length]);
-
     return scoreArray;
 }
 
+
+//Functions used for testing
 function formatNumber(num) {
     return (num).toFixed(2).padStart(3, '0');
 }
