@@ -488,12 +488,13 @@ def getAttendance(request):
         data = json.loads(data)
 
         event = Event.objects.get(pk=data["event_id"])
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
+        ticketedEvents = Ticket.objects.filter(event=event, account=account)
 
-        ticketedEvents = queries.getTicketedEvents()
-        for ticketedEvent in ticketedEvents:
-            if (data["event_id"] == ticketedEvent["event_id"] and data["account_id"] == ticketedEvent["account_id"]):
-                return JsonResponse({"attendance": True})                
-        return JsonResponse({"attendance": False})
+        if len(ticketedEvents) > 0:
+            return JsonResponse({"attendance": True})
+        else:
+            return JsonResponse({"attendance": False})
 
 
 """
