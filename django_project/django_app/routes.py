@@ -486,11 +486,12 @@ def getAttendance(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-
+        print("data is", data)
         event = Event.objects.get(pk=data["event_id"])
 
         ticketedEvents = queries.getTicketedEvents()
         for ticketedEvent in ticketedEvents:
+            print("ticketed event is", ticketedEvent)
             if (data["event_id"] == ticketedEvent["event_id"] and data["account_id"] == ticketedEvent["account_id"]):
                 return JsonResponse({"attendance": True})                
         return JsonResponse({"attendance": False})
