@@ -516,6 +516,6 @@ def setAttendance(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        result = queries.joinEvent(data["account_id"], data["Token"], data["event_id"], data["event_ticket"])
+        result = queries.joinEvent(data["account_id"], data["Token"], data["event_id"], data["attendance"])
 
         return JsonResponse(result)
