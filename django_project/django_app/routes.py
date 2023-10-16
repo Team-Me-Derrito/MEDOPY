@@ -347,7 +347,7 @@ def login(request):
         password_hashed = security.hash(data["Password"], queries.getSalt(data["Password"]))
         response = queries.verify(data["Email"], password_hashed)
 
-        if response["token"] is not None:
+        if response is not None:
             login = {"sucess": True, "account_id": response["account_id"], "token": response["token"]}
         else:
             login = {"success": False}
@@ -482,6 +482,7 @@ def getProjects(request):
 
         return JsonResponse({"projects": projects})
 
+
 """
 getAttendance()
     request: data["event_id]
@@ -494,4 +495,4 @@ def getAttendance(request):
 
         events = Event.objects.filter(pk=data["event_id"])
 
-        return JsonResponse({"attendance": events})
+        return JsonResponse({"attendance": len(events)})
