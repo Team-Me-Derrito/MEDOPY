@@ -75,7 +75,11 @@ def getTicketedEvents(account):
 
 
 def getSalt(email):
-    if Account.objects.get(email=email):
+    try:
+        Account.objects.get(email=email)
+    except Account.DoesNotExist:
+        return None
+    else:
         return Account.objects.get(email=email).salt
     
 
