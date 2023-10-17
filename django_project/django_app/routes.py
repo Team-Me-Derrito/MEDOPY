@@ -248,6 +248,7 @@ getCommunityInfo()
 @csrf_exempt
 def getCommunityInfo(request):
     if request.method == "POST":
+        print("body is ", request.body)
         data = request.body.decode("utf-8")
         print("getcommunity data ", data)
         data = json.loads(data)
