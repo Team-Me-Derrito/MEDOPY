@@ -50,13 +50,6 @@ def getEventInfo(request):
         return JsonResponse(struct)
 
 """
-createSalt()
-    Generates a password salt... TODO
-"""
-def createSalt():
-    return
-
-"""
 createAccount()
     Make a new account from sign up info.
     Request data: communityID, accountName, age, gender, phoneNumber, email, password
@@ -64,13 +57,12 @@ createAccount()
 def createAccount(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
-
         community = Community.objects.get(pk=data["community_id"])
         token = security.generateKey()
         salt = security.generateKey(length=20)
         password = data["Password"]
         password = security.hash(password, salt)
-        newAccount = Account(community=community, 
+        newAccount = Account(community=community,
                              accountName=data["AccountName"],
                              birthday=data["Birthday"],
                              gender=data["Gender"],
@@ -257,6 +249,7 @@ getCommunityInfo()
 def getCommunityInfo(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
+        print(data)
         data = json.loads(data)
 
         community = Community.objects.get(pk=data["community_id"])
