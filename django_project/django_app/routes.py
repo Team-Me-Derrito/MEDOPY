@@ -58,6 +58,7 @@ createAccount()
 def createAccount(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
+        data = json.loads(data)
         print("create account daata is ", data)
         community = Community.objects.get(pk=data["community_id"])
         token = security.generateKey()
