@@ -490,7 +490,6 @@ def getAttendance(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-        print("data is", data)
         event = Event.objects.get(pk=data["event_id"])
 
         account = Account.objects.get(pk=data["account_id"], token=data["Token"])
@@ -515,6 +514,7 @@ def setAttendance(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
+        print("data is", data)
 
         result = queries.joinEvent(data["account_id"], data["Token"], data["event_id"], data["attendance"])
 
