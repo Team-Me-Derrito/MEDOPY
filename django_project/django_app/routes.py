@@ -160,7 +160,7 @@ def getDiscussionPosts(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-
+        print("communits posts data is", data)
         #account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         #community = account.community
 
