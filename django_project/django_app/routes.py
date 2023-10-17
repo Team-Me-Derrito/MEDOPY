@@ -260,7 +260,7 @@ def getCommunityInfo(request):
 
         community = Community.objects.get(pk=data["community_id"])
 
-        community_info = {"community_name": community.communityName} #TODO coordinate
+        community_info = {"community_name": community.communityName, "community_id": community.pk, "community_health": community.health} #TODO coordinate
         return JsonResponse(community_info)
     
 
@@ -418,7 +418,9 @@ def createEvent(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
         print("create event data ", data)
-        result = queries.createEvent()
+        #project_id, interestType_id, venue_id, startDateTime, duration, price, name, description, account_id, token
+        #{'Token': 1, 'account_id': 1, 'name': 'R', 'description': 'R', 'price': 0, 'duration': 4, 'startDateTime': '2023-10-17T13:40:41.736Z', 'venue': 'If'}
+        result = queries.createEvent(data["project_id"], data[""])
         return JsonResponse(result)
     
 
