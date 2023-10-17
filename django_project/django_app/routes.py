@@ -54,6 +54,7 @@ createAccount()
     Make a new account from sign up info.
     Request data: communityID, accountName, age, gender, phoneNumber, email, password
 """
+@csrf_exempt
 def createAccount(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
