@@ -1,0 +1,117 @@
+.side-list {
+    /* width: 100%; */
+    max-height: 75%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* height: 100%; */
+    margin-left: 5%;
+    /* margin-top: 10px; */
+}
+
+.side-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.side-list::-webkit-scrollbar-thumb {
+    background: rgb(97, 48, 20);
+    border-radius: 3px;
+    height: 60px;
+}
+
+.side-list::-webkit-scrollbar-track {
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+    border: none;
+}
+
+.side-list::-webkit-scrollbar-button:end:increment {
+    height: 10%;
+    display: block;
+    background: transparent;
+}
+
+
+.list-item-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+.toggled-container {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 11px;
+}
+
+.line_on {
+    border-left: 3px solid #edfb55
+}
+
+.line_off {
+    border-left: 3px solid rgb(69, 69, 69);
+    position: relative;
+}
+
+.line_off::before {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    /* left: -10px; Adjust the horizontal positioning as needed */
+    transform: translateX(-57%);
+    /* right: 100%; */
+    /* margin-left: -7px; */
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 6px solid rgb(69, 69, 69);
+}
+
+.toggled-container-content {
+    flex: 1;
+    margin-left: 11px;
+}
+
+
+.item-name {
+    font-size: 1.5rem;
+    margin: 0px;
+    margin-left: 10px;
+    flex: 1;
+    overflow-wrap: break-word;
+}
+
+.toggle-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.filled .circle {
+    background-color: #edfb55
+        /* Change to your desired filled color */
+}
+
+.unfilled .circle {
+    background-color: rgb(69, 69, 69);
+    /* Change to your desired unfilled color */
+}
+
+.additional-info {
+    margin-top: 5px;
+    overflow-wrap: break-word;
+}

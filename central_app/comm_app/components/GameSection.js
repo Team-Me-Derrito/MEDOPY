@@ -2,21 +2,35 @@ import React, { useEffect, useRef } from 'react';
 import styles from './GameSection.module.css'
 import { generatePerlinNoise } from 'perlin-noise'
 import { IMAGE_SOURCES } from '@/public/constants/ImagePaths';
+import RenderList from './RenderList';
 
 //Improve game banner
-export default function GameSection({ scores, isize }) {
+export default function GameSection({ community, updateCommunity, scores, isize }) {
     const [theme, setTheme] = React.useState(0);
     const [rowSize, setRowSize] = React.useState(isize * 2 + 1);
+    const [messageItems, setMessageItems] = React.useState(getMessages());
+
+    const [messageDisplay, setMessageDisplay] = React.useState(true);
 
     function changeTheme(change) { setTheme((theme + change + 4) % 4); }
-    function changeSize(change) { setRowSize((rowSize + 2 * change + 100) % 100 )}
+    function changeSize(change) { setRowSize((rowSize + 2 * change + 100) % 100) }
 
     return (
         <div className={styles['game-container']}>
-            <div className={styles['game-banner-container']}>
-                <GameBanner />
+            <div className={styles['game-banner-container']}> {/*Top Banner*/}
+                <GameBanner community={community} updateCommunity={updateCommunity} />
+            </div>
+            <div>                                             {/*Tree Game*/}
+
             </div>
             <GameDisplay scores={scores} theme={theme} rowSize={rowSize} />
+            {messageDisplay &&
+                <div className={`${styles['overlay-box']} ${styles['right-overlay']}`}>{/*Chat Display*/}
+                    <h2 className={styles['overlay-title']}>Community Messages</h2>
+                    <RenderList items={messageItems} setItem={setMessageItems} type="message" />
+                </div>
+            }
+
             <div className={styles['game-button-container']}>
                 <button className={styles['b1']} onClick={() => changeTheme(-1)}>⬅</button>
                 <button className={styles['b2']} onClick={() => changeTheme(1)}>➡</button>
@@ -27,12 +41,28 @@ export default function GameSection({ scores, isize }) {
     );
 }
 
-function GameBanner({ }) {
+function GameBanner({ community, updateCommunity }) {
     return (
         <div className={styles['game-banner']}>
-            <h2>Community Display</h2>
+            <h2>{(community && community.communityName) ?? "PlaceHolder"}</h2>
         </div>
     )
+}
+
+function TakeInput({ updateCommunity }) {
+    const [communityID, setCommunityID] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        updateCommunity(communityID)
+        // 1. Send url to /api route for AXE CORE scraping
+        console.log("Updated");
+    };
+
+    <form onSubmit={handleSubmit}>
+        <input onChange={(e) => setCommunityID(e.target.value)} type="community Id" />
+        <button type="submit">Submit</button>
+    </form>
 }
 
 //Take in an array of numbers -> re order to have in display order
@@ -87,6 +117,7 @@ function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores
     //Canvas size
     const canvasContainer = canvas.parentElement;
     canvas.width = canvasContainer.clientWidth;
+    const effWidth = canvasContainer.clientWidth;
     canvas.height = canvasContainer.clientHeight;
 
     //Canvas fill
@@ -168,4 +199,39 @@ function prn2d(arr, n, m) {
         const row = arr.slice(i * m, (i + 1) * m);
         console.log(row.join('\t'));
     }
+}
+
+
+function getMessages(communityId) {
+    return [
+        {
+            message_id: 1, sender: "J1m", message: "I like dogs"
+        },
+
+        {
+            message_id: 2, sender: "J.2", message: "I don't like cats"
+        },
+
+        {
+            message_id: 3, sender: "J3remy", message: "123 one two three"
+        },
+
+        { message_id: 4, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 5, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 6, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 7, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 8, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 9, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 10, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 11, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 12, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 13, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 14, sender: "J4ck", message: "This is the fourth message" },
+        { message_id: 15, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+        { message_id: 16, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+        { message_id: 17, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+        { message_id: 18, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+        { message_id: 19, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+        { message_id: 20, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+    ];
 }
