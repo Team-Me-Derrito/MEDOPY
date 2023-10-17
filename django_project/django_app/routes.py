@@ -417,7 +417,7 @@ def createEvent(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-
+        print("create event data ", data)
         result = queries.createEvent()
         return JsonResponse(result)
     
