@@ -96,7 +96,7 @@ def verify(email, password_hashed):
     
 
 def createPost(account_id, token, message):
-    account = Account.objects.get(id=account_id, token=token)
+    account = Account.objects.get(pk=account_id, token=token)
 
     post = DiscussionPost(community=account.community, account=account, timestamp=datetime.now(), text=message)
     post.save()

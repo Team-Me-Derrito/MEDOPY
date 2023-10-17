@@ -166,11 +166,10 @@ def getDiscussionPosts(request):
 
         communityid = Community.objects.get(pk=2)
         posts = []
-        # for post in DiscussionPost.objects.filter(community=communityid):
-        #     posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
-        #Just dumping everything lol
-        for post in DiscussionPost.objects.all():
+        for post in DiscussionPost.objects.filter(community=communityid):
             posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
+        # for post in DiscussionPost.objects.all():
+        #     posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
 
         return JsonResponse({"posts": posts})
     
@@ -373,7 +372,7 @@ def createPost(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
         print("create post data ", data)
-        result = queries.createPost(1, "laksdjfsldfkj", data["message"])
+        result = queries.createPost(data["account_id"], data["Token"], data["message"])
         return JsonResponse(result)
 
 
