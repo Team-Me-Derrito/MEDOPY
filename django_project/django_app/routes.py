@@ -419,8 +419,10 @@ def createEvent(request):
         data = json.loads(data)
         print("create event data ", data)
         #project_id, interestType_id, venue_id, startDateTime, duration, price, name, description, account_id, token
-        #{'Token': 1, 'account_id': 1, 'name': 'R', 'description': 'R', 'price': 0, 'duration': 4, 'startDateTime': '2023-10-17T13:40:41.736Z', 'venue': 'If'}
-        result = queries.createEvent(data["project_id"], data[""])
+#{'Token': 1, 'account_id': 1, 'name': 'The ', 'description': 'F', 'price': 0, 'duration': 4, 'startDateTime': '2023-10-17T13:49:21.950Z', 'venue_id': 1, 'project_id': 1, 'interest_id': 1}
+        result = queries.createEvent(
+            data["project_id"], data["interest_id"], data["venue_id"], data["startDateTime"], data["duration"], data["price"], data["name"], data["description"], data["account_id"], data["Token"]
+        )
         return JsonResponse(result)
     
 
