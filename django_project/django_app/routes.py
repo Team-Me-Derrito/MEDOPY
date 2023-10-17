@@ -79,7 +79,7 @@ def createAccount(request):
             accountInterest = AccountInterest(account=newAccount, interestType=interestObj)
             accountInterest.save()
 
-        return JsonResponse({"account_id": newAccount.pk, "token": token})
+        return JsonResponse({"account_id": newAccount.pk, "token": token, "success": True})
 """
 getAllEvents()
     Returns all the events in the database
@@ -249,7 +249,7 @@ getCommunityInfo()
 def getCommunityInfo(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
-        print(data)
+        print("getcommunity data ", data)
         data = json.loads(data)
 
         community = Community.objects.get(pk=data["community_id"])
@@ -368,7 +368,7 @@ def createPost(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-
+        print("create post data ", data)
         result = queries.createPost(1, "laksdjfsldfkj", data["message"])
         return JsonResponse(result)
 
