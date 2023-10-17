@@ -66,16 +66,18 @@ def createAccount(request):
         data = request.body.decode("utf-8")
 
         community = Community.objects.get(pk=data["community_id"])
-        token = security.generateToken()
-
+        token = security.generateKey()
+        salt = security.generateKey(length=20)
+        password = data["Password"]
+        password = security.hash(password, salt)
         newAccount = Account(community=community, 
                              accountName=data["AccountName"],
                              birthday=data["Birthday"],
                              gender=data["Gender"],
                              phoneNumber=data["PhoneNumber"],
                              email=data["Email"],
-                             password=data["Password"],
-                             salt="blah",
+                             password=password,
+                             salt=salt,
                              token=token
                             )
         newAccount.save()
