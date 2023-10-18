@@ -261,7 +261,7 @@ def getCommunityInfo(request):
         data = json.loads(data)
 
         community = Community.objects.get(pk=data["community_id"])
-        if data["community_id"] == 1:
+        if data["community_id"] == "1":
             scores = [3, 0, 0,
                         0, 1, 2, 0,
                         1, 3, 3, 2, 0,
@@ -271,7 +271,7 @@ def getCommunityInfo(request):
                         1, 1, 3, 3, 1,
                         0, 2, 1, 2,
                         0, 0, 0]
-        elif data["community_id"] == 2:
+        elif data["community_id"] == "2":
             scores = [0, 0, 0,
                         0, 0, 3, 0,
                         0, 0, 1, 2, 0,
@@ -281,7 +281,7 @@ def getCommunityInfo(request):
                         0, 1, 2, 1, 0,
                         0, 3, 0, 0,
                         0, 0, 0]
-        elif data["community_id"] == 3:
+        elif data["community_id"] == "3":
             scores = [5, 5, 5, 5, 5, 5, 5, 5, 
                         4, 4, 4, 4, 4, 4, 4, 4,
                         4, 4, 4, 4, 4, 4, 4, 4,
