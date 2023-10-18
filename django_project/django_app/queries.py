@@ -167,3 +167,12 @@ def getCommunityScore(community):
 
     avg_score = statistics.mean(eventSignupRatio)
     return {"score": avg_score}
+
+def getUserScore(account):
+    events = Event.objects.all()
+    accountTickets = Ticket.objects.filter(account=account)
+    if len(events) == 0:
+        return -1
+    else:
+        percentScore = len(accountTickets) / len(events) * 100
+        return percentScore

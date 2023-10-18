@@ -260,7 +260,16 @@ def getCommunityInfo(request):
 
         community = Community.objects.get(pk=data["community_id"])
 
-        community_info = {"community_name": community.communityName, "community_id": community.pk, "community_health": community.health} #TODO coordinate
+        account_scores = []
+        for account in Account.objects.filter(community=community):
+            score = queries.getUserScore(account)
+            account_scores.append(score)
+
+        community_info = {
+            "community_name": community.communityName, 
+            "community_id": community.pk, 
+            "scores": account_scores
+            }
         return JsonResponse(community_info)
     
 
@@ -552,14 +561,12 @@ def getUserScore(request):
         data = request.body.decode("utf-8")
         account = Account.objects.get(pk=data["account_id"], token=data["Token"])
 
-        events = Event.objects.all()
-        accountTickets = Ticket.objects.filter(account=account)
+        score = queries.getUserScore(account)
 
-        if len(events) == 0:
+        if score == -1:
             return JsonResponse({"success": False, "message": "no events cannot calculate score"})
         else:
-            percentScore = len(accountTickets) / len(events) * 100
-            return JsonResponse({"success": True, "percent_score": percentScore})
+            return JsonResponse({"success": True, "score": score})
         
 """
 getCommunityScore()
