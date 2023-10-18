@@ -39,7 +39,7 @@ def getEventsByCommunty(community_id):
     for event in Event.objects.all():
         if (event.project in projects):
             events.append({
-                "id": event.id, 
+                "id": event.pk, 
                 "name": event.name,
                 "venue_name": event.venue.locationName,
                 "gps_longitude": event.venue.gpsLongitude,
