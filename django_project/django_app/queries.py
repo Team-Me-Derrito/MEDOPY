@@ -111,7 +111,7 @@ def getAccountInfo(account_id, token):
     for interest in AccountInterest.objects.filter(id=account_id):
         interests.append({"interest": interest.interestType.interestType})
 
-    score = getUserScore(account)
+    score = getUserScore(account[0])
     info = {
         "community": account[0].community.communityName,
         "name": account[0].accountName,
