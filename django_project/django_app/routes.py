@@ -289,6 +289,7 @@ def getProjectsInCommunity(request):
         for project in Project.objects.all():
             if project.community == community:
                 project_stuct = {
+                    "id" : project.pk,
                     "project_id": project.pk,
                     "project_name": project.projectName,
                     "project_description": project.description,
