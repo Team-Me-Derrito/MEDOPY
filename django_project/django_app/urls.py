@@ -35,7 +35,7 @@ urlpatterns = [
     #display
     path("api/display/posts", routes.getCommunityPosts),
     path("api/display/interests", routes.getCommunityInterests),
-    path("api/display/projects)", routes.getProjectsInCommunity),
+    path("api/display/projects", routes.getProjectsInCommunity),
     path("api/display/info", routes.getCommunityInfo),
     
 ]
