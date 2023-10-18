@@ -86,7 +86,7 @@ def getSalt(email):
 def verify(email, password_hashed):
     account = Account.objects.filter(email=email, password=password_hashed)
     if len(account) == 1:
-        token = security.generateToken()
+        token = security.generateKey()
         account[0].token = token
         account[0].save()
 
