@@ -99,12 +99,12 @@ def verify(email, password_hashed):
 def createPost(account_id, token, message):
     account = Account.objects.get(pk=account_id, token=token)
 
-    post = DiscussionPost(community=account.community, account=account, timestamp=datetime.now(), text=message)
+    post = DiscussionPost(community=account.community, account=account, text=message)
     post.save()
     return {"success": True}
 
 def getAccountInfo(account_id, token):
-    account = Account.objects.get(pk=account_id, token=token)
+    account = Account.objects.filter(pk=account_id, token=token)
 
     interests = []
     for interest in AccountInterest.objects.filter(id=account_id):
