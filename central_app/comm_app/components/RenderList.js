@@ -2,6 +2,11 @@ import React from 'react';
 import styles from './RenderList.module.css'
 
 export default function RenderList({ items, setItem, type }) {
+  if (items == null) {
+    // \\throw new Error("Null items")
+    return <div>loading</div>
+  }
+  console.log(items)
   return (
     <ul className={styles['side-list']}>
       {items.map((item) => (
@@ -29,14 +34,14 @@ function RenderProjectListItem({ item, setItems }) {
     <div>
       <div className={styles['toggle-container']}>
         <RenderToggleBtn item={item} setItems={setItems} />
-        <span className={styles["item-name"]}>{item.projectName}</span>
+        <span className={styles["item-name"]}>{item.project_name}</span>
       </div>
       <div className={`${styles['toggled-container']} ${item.isOpen ? styles['line_on'] : styles['line_off']}`}>
         <div className={styles['toggled-container-content']}>
-          From {item.startDate} until {item.endDate}
+          From {item.project_start} until {item.project_end}
           {item.isOpen && (
             <div className={styles["additional-info"]}>
-              {item.description}
+              {item.project_description}
             </div>
           )}
         </div>
@@ -74,8 +79,6 @@ function RenderEventListItem({ item, setItems }) {
   )
 }
 
-
-
 function RenderToggleBtn({ item, setItems }) {
   const toggleItem = (itemId, setItems) => {
     setItems((prevItems) =>
@@ -92,12 +95,22 @@ function RenderToggleBtn({ item, setItems }) {
   )
 }
 
-
+const blackList = ["fuck", "retarded", "nig"]
 
 function RenderMessageListItem({ item, setItems }) {
   return (
     <div>
-      <p1>{item.sender} : {item.message}</p1>
+      <p1>{item.poster_account} : {filter(item.post)}</p1>
     </div>
   )
 }
+
+function filter(word) {
+  for (var i = 0; i < blackList.length; i++) {
+    if (word.toLowerCase().includes(blackList[i])) {
+      return ("[REDACTED]");
+    }
+  }
+  return word
+}
+

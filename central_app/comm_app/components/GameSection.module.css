@@ -106,7 +106,7 @@
 }
 
 .b3 {
-  margin: 0 0 0 5px;
+  margin: 0 0 0 10px;
   width: 80px; /* Adjust the width as needed */
   height: 40px; /* Adjust the height as needed */
   border: 3px solid #204811; /* Add a border with the desired color */
@@ -126,16 +126,88 @@
   border-radius: 0px 25px 25px 0px; /* Makes the button circular */
   background-color: rgb(106, 153, 75);
   font-size: 360%;
-  /* line-height: -10px;  */
   align-items: center;
-  /* justify-content: center; Horizontally center the text */
-  /* align-items: center; Vertically center the text   */
-  /* margin-top: -10px; */
-  
-  /* text-align: center; Center the text horizontally */
-  /* position: relative; Create a positioning context for the text */
-
 }
+
+.b4-1 {
+  transform: translate(0, -30%);
+}
+
+.b5 {
+  width: 80px; /* Adjust the width as needed */
+  height: 40px; /* Adjust the height as needed */
+  border: 3px solid #204811; /* Add a border with the desired color */
+  /* color: #204811; */
+  border-radius: 25px 25px 25px 25px; /* Makes the button circular */
+  background-color: rgb(106, 153, 75);
+  font-size: 220%;
+  align-items: center;
+  margin: 0 10px 0 10px;
+  color: transparent;  
+  text-shadow: 0 0 0 #204811;
+}
+
+.b5-1 {
+  transform: translate(0, -20%);
+}
+
+/* Drop down styling: */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  padding: 0 20px;
+  height: 40px;
+  border: 3px solid #204811;
+  border-radius: 25px 25px 25px 25px;
+  overflow: hidden;
+  background-color: rgb(106, 153, 75);
+  font-weight: bold;
+}
+
+.dropdown-select {
+  /* width: fit-content; */
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  color: #204811;
+  font-size: 20px; /* Adjust the font size as needed */
+  font-weight: bold;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding: 5px 10px; /* Adjust the padding as needed */
+}
+
+.dropdown-select .dropdown-option {
+  background-color: rgb(106, 153, 75);
+  font-weight: bold;
+  color: #204811;
+}
+
+/* Style the dropdown arrow (not fully cross-browser compatible) */
+.dropdown-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-top-color: #204811;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+
+
+
+
+
+
+
+
 
 .canvas-container {
   width: 100%;

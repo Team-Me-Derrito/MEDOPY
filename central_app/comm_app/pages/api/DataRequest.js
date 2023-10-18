@@ -3,6 +3,13 @@ import { postRequest } from './BaseRequest.js';
 
 const path = 'display/';
 
+export async function getCommunities() {
+    const message = {};
+
+    const endpoint = path + "communities"; // display/info
+    return await postRequest(endpoint, message);
+}
+
 export async function getCommunityInfo(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id
