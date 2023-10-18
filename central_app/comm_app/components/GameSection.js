@@ -3,75 +3,134 @@ import styles from './GameSection.module.css'
 import { generatePerlinNoise } from 'perlin-noise'
 import { IMAGE_SOURCES } from '@/public/constants/ImagePaths';
 import RenderList from './RenderList';
+import { getCommunities, getCommunityPosts } from '@/pages/api/DataRequest';
+
+
+const communities = [
+    { community_id: 1, community_name: 'Community 1' },
+    { community_id: 2, community_name: 'This is the second' },
+    { community_id: 3, community_name: 'The thrid' },
+];
 
 //Improve game banner
-export default function GameSection({ community, updateCommunity, scores, isize }) {
+export default function GameSection({ communityData, communityID, setCommunityID, scores, isize }) {
+    //Use state and function to control theme
     const [theme, setTheme] = React.useState(0);
-    const [rowSize, setRowSize] = React.useState(isize * 2 + 1);
-    const [messageItems, setMessageItems] = React.useState(getMessages());
-
-    const [messageDisplay, setMessageDisplay] = React.useState(true);
-
     function changeTheme(change) { setTheme((theme + change + 4) % 4); }
+
+    //Use state and function to change size
+    const [rowSize, setRowSize] = React.useState(isize * 2 + 1);
     function changeSize(change) { setRowSize((rowSize + 2 * change + 100) % 100) }
+
+    //Use state and function to toggle message board
+    const [messageDisplay, setMessageDisplay] = React.useState(true);
+    function toggleMessageDiplay() { setMessageDisplay(!messageDisplay) }
+
+    //Use state and use effect to get all communities for drop down menu
+    const [communities, setCommunities] = React.useState([]);
+    useEffect(() => { //Asyn function to get data
+      async function getData() {
+        const result = await getCommunities();
+        if (result != null) {
+            setCommunities(result.communities);
+        }
+      }
+      if (!communities.length) { getData(); }
+    }, []);
+
+    //Use state to retrieve message items
+    const [messageItems, setMessageItems] = React.useState([]);
+    //Use effect that retrieves messages every 5seconds
+    useEffect(() => {
+        async function getData() {
+            const result = await getCommunityPosts(communityID);
+            console.log('Run')
+            if (result != null) {
+                setMessageItems(result.posts);
+            }
+        }
+        if (messageItems == null || !messageItems.length) {
+            getData(); // Initial data fetch
+        }
+        const fetchDataInterval = setInterval(getData, 5000); // Fetch data every 10 seconds
+        return () => {
+            clearInterval(fetchDataInterval);
+        };
+    }, [communityID]);
 
     return (
         <div className={styles['game-container']}>
-            <div className={styles['game-banner-container']}> {/*Top Banner*/}
-                <GameBanner community={community} updateCommunity={updateCommunity} />
+            {/*Top Banner*/}
+            <div className={styles['game-banner-container']}>
+                <GameBanner
+                    communityData={communityData}
+                    communityID={communityID}
+                    setCommunityID={setCommunityID}
+                />
             </div>
-            <div>                                             {/*Tree Game*/}
-
-            </div>
+            {/*Tree Game*/}
             <GameDisplay scores={scores} theme={theme} rowSize={rowSize} />
+            {/*Chat Display*/}
             {messageDisplay &&
-                <div className={`${styles['overlay-box']} ${styles['right-overlay']}`}>{/*Chat Display*/}
+                <div className={`${styles['overlay-box']} ${styles['right-overlay']}`}>
                     <h2 className={styles['overlay-title']}>Community Messages</h2>
                     <RenderList items={messageItems} setItem={setMessageItems} type="message" />
                 </div>
             }
-
+            {/* Buttons and Dropdown*/}
             <div className={styles['game-button-container']}>
                 <button className={styles['b1']} onClick={() => changeTheme(-1)}>⬅</button>
                 <button className={styles['b2']} onClick={() => changeTheme(1)}>➡</button>
                 <button className={styles['b3']} onClick={() => changeSize(1)}>+</button>
-                <button className={styles['b4']} onClick={() => changeSize(-1)}>-</button>
+                <button className={styles['b4']} onClick={() => changeSize(-1)}>
+                    <div className={styles['b4-1']}>-</div>
+                </button>
+                <button className={styles['b5']} onClick={() => toggleMessageDiplay()}>
+                    <div className={styles['b5-1']}>💬</div>
+                </button>
+                <DropdownMenu currentID={communityID} setID={setCommunityID} options={communities} />
             </div>
         </div>
     );
 }
 
-function GameBanner({ community, updateCommunity }) {
+function GameBanner({ communityData }) {
     return (
         <div className={styles['game-banner']}>
-            <h2>{(community && community.communityName) ?? "PlaceHolder"}</h2>
+            <h2>{communityData.community_name}</h2>
+        </div >
+    )
+}
+
+function DropdownMenu({ currentID, setID, options }) {
+    const handleSelectChange = (event) => {
+        const communityID = event.target.value;
+        setID(communityID);
+    };
+    return (
+        <div className={styles['dropdown-container']}>
+            <select className={styles['dropdown-select']} value={currentID} onChange={handleSelectChange}>
+                {options.map((option) => (
+                    <option className={styles['dropdown-option']} key={option.community_id} value={option.community_id}>
+                        {option.community_name}
+                    </option>
+                ))}
+            </select>
         </div>
     )
 }
 
-function TakeInput({ updateCommunity }) {
-    const [communityID, setCommunityID] = useState("");
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        updateCommunity(communityID)
-        // 1. Send url to /api route for AXE CORE scraping
-        console.log("Updated");
-    };
-
-    <form onSubmit={handleSubmit}>
-        <input onChange={(e) => setCommunityID(e.target.value)} type="community Id" />
-        <button type="submit">Submit</button>
-    </form>
-}
-
 //Take in an array of numbers -> re order to have in display order
 function GameDisplay({ scores, theme, rowSize }) {
+    //Varaible lock grid permuatation
     const [firstLoad, setFirstLoad] = React.useState(true);
-
+    //Varaible to store permutation of scores
     const [displayScores, setDisplayScores] = React.useState(scores);
-    function setPermutate(scores, rows, cols) { setDisplayScores(permuteScores(scores, rows, cols)) }
+    function setPermutate(scores, rows, cols) {
+        setDisplayScores(permuteScores(scores, rows, cols))
+    }
 
+    //Variable to store number of coloumns ->
     const [colSize, setColSize] = React.useState(0);
     function updateColSize(newCol, reload) {
         if (reload || colSize != newCol) {
@@ -201,37 +260,59 @@ function prn2d(arr, n, m) {
     }
 }
 
+function arraysAreEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 
-function getMessages(communityId) {
+
+
+function getCommunityPostsTest(communityId) {
+    if (communityId == 1) {
+        return [
+            { message_id: 1, sender: "J1m", message: "I like dogs" },
+            { message_id: 2, sender: "J.2", message: "I don't like cats" },
+            { message_id: 3, sender: "J3remy", message: "123 one two three" },
+            { message_id: 4, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 5, sender: "J4ck", message: "This is the fourth message" },
+        ];
+    } else if (communityId == 2) {
+        return [
+            { message_id: 1, sender: "J1m", message: "I like dogs" },
+            { message_id: 2, sender: "J.2", message: "I don't like cats" },
+            { message_id: 3, sender: "J3remy", message: "123 one two three" },
+            { message_id: 4, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 5, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 6, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 7, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 8, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 9, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 10, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 11, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 12, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 13, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 14, sender: "J4ck", message: "This is the fourth message" },
+            { message_id: 15, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+            { message_id: 16, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+            { message_id: 17, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+            { message_id: 18, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+            { message_id: 19, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+            { message_id: 20, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
+        ];
+    }
+
     return [
-        {
-            message_id: 1, sender: "J1m", message: "I like dogs"
-        },
-
-        {
-            message_id: 2, sender: "J.2", message: "I don't like cats"
-        },
-
-        {
-            message_id: 3, sender: "J3remy", message: "123 one two three"
-        },
-
-        { message_id: 4, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 5, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 6, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 7, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 8, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 9, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 10, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 11, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 12, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 13, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 14, sender: "J4ck", message: "This is the fourth message" },
-        { message_id: 15, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-        { message_id: 16, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-        { message_id: 17, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
         { message_id: 18, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
         { message_id: 19, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
         { message_id: 20, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
     ];
+
+
 }
