@@ -526,6 +526,7 @@ def setAttendance(request):
 deleteEvent()
     request: data["event_id", "account_id", "Token"]
 """
+@csrf_exempt
 def deleteEvent(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -543,6 +544,7 @@ def deleteEvent(request):
 getUserScore()
     request: data["account_id", "Token"]
 """
+@csrf_exempt
 def getUserScore(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
@@ -561,6 +563,7 @@ def getUserScore(request):
 getCommunityScore()
     request: data["accout_id", "token"]
 """
+@csrf_exempt
 def getCommunityScore(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
