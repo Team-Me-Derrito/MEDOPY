@@ -111,6 +111,7 @@ def getAccountInfo(account_id, token):
     for interest in AccountInterest.objects.filter(id=account_id):
         interests.append({"interest": interest.interestType.interestType})
 
+    score = getUserScore(account)
     info = {
         "community": account.community.communityName,
         "name": account.accountName,
@@ -118,7 +119,8 @@ def getAccountInfo(account_id, token):
         "gender": account.gender,
         "phoneNumber": account.phoneNumber,
         "email": account.email,
-        "interests": interests
+        "interests": interests,
+        "score": score
     }
     return info
 

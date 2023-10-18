@@ -584,4 +584,3 @@ def getCommunityScore(request):
         
         score = queries.getCommunityScore(community)
         return JsonResponse(score)
-            
