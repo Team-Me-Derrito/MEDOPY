@@ -38,6 +38,7 @@ def getEventsByCommunty(community_id):
     events = []
     for event in Event.objects.all():
         if (event.project in projects):
+            attendance = getEventAttendance(event)
             events.append({
                 "id": event.pk, 
                 "name": event.name,
@@ -48,7 +49,7 @@ def getEventsByCommunty(community_id):
                 "start_date_time": event.startDateTime,
                 "creator_name": event.creator.accountName,
                 "capacity": event.venue.capacity,
-                "attendance": getEventAttendance(events)
+                "attendance": attendance
                 })
     return events
 
