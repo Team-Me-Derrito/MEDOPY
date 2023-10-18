@@ -571,11 +571,6 @@ def getCommunityScore(request):
         account = Account.objects.get(pk=data["account_id"], token=data["Token"])
         community = account.community
         
-        events = queries.getEventsByCommunty(community.pk)
-
-        eventSignupRatio = []
-        for event in events:
-            capacity = event.venue.capacity
-            tickets = Ticket.objects.filter(event=event)
-
+        score = queries.getCommunityScore(community)
+        return JsonResponse(score)
             

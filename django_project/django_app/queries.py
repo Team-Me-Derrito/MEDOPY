@@ -1,6 +1,7 @@
 from .models import Account, Project, AccountInterest, Event, Ticket, Community, DiscussionPost, InterestType, Venue
 from datetime import datetime, timedelta
 from . import security
+import statistics
 
 """
 getInterestEventsByAccount()
@@ -152,3 +153,17 @@ def createEvent(project_id, interestType_id, venue_id, startDateTime, duration, 
     )
     event.save()
     return({"event_id": event.id})
+
+def getCommunityScore(community):
+    events = getEventsByCommunty(community.pk)
+
+    eventSignupRatio = []
+    for event in events:
+        capacity = event.venue.capacity
+        tickets = Ticket.objects.filter(event=event)
+
+        score = len(tickets) / capacity * 100
+        eventSignupRatio.append(score)
+
+    avg_score = statistics.mean(eventSignupRatio)
+    return {"score": avg_score}
