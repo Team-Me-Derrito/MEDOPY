@@ -90,7 +90,7 @@ def verify(email, password_hashed):
         account[0].token = token
         account[0].save()
 
-        return {"account_id": account.id, "token":token}
+        return {"account_id": account.pk, "token":token}
     else:
         return None
     
