@@ -403,6 +403,7 @@ def getAccountInfo(request):
         data = json.loads(data)
 
         result = queries.getAccountInfo(data["account_id"], data["Token"])
+        print(data)
         return JsonResponse(result)
     
     
