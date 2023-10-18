@@ -21,6 +21,7 @@ urlpatterns = [
     path("api/events/create", routes.createEvent), #check url
     path("api/events/attendance/get", routes.getAttendance),
     path("api/events/attendance/set", routes.setAttendance),
+    path("api/events/delete", routes.deleteEvent),
 
     #community
     path("api/community/posts", routes.getDiscussionPosts),
