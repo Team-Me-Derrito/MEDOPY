@@ -287,7 +287,7 @@ def getProjectsInCommunity(request):
                     "project_end": project.endDate
                 }
                 projects.append(project_stuct)
-        return JsonResponse(projects)
+        return JsonResponse({"projects": projects})
     
 """
 getCommunityInterests()
