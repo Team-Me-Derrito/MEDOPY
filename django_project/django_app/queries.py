@@ -113,12 +113,12 @@ def getAccountInfo(account_id, token):
 
     score = getUserScore(account)
     info = {
-        "community": account.community.communityName,
-        "name": account.accountName,
-        "birthday": account.birthday,
-        "gender": account.gender,
-        "phoneNumber": account.phoneNumber,
-        "email": account.email,
+        "community": account[0].community.communityName,
+        "name": account[0].accountName,
+        "birthday": account[0].birthday,
+        "gender": account[0].gender,
+        "phoneNumber": account[0].phoneNumber,
+        "email": account[0].email,
         "interests": interests,
         "score": score
     }
