@@ -104,7 +104,7 @@ def createPost(account_id, token, message):
     return {"success": True}
 
 def getAccountInfo(account_id, token):
-    account = Account.objects.get(id=account_id, token=token)
+    account = Account.objects.get(pk=account_id, token=token)
 
     interests = []
     for interest in AccountInterest.objects.filter(id=account_id):
