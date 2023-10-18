@@ -33,9 +33,15 @@ urlpatterns = [
     
     
     #display
+    path("api/display/communities", routes.getCommunities),
+    path("api/display/info", routes.getCommunityInfo),
+    
+    path("api/display/projects", routes.getProjectsInCommunity),
+    path("api/display/events", routes.getAllCommunityEventsDisplay),
+
     path("api/display/posts", routes.getCommunityPosts),
     path("api/display/interests", routes.getCommunityInterests),
-    path("api/display/projects", routes.getProjectsInCommunity),
-    path("api/display/info", routes.getCommunityInfo),
+    
+    
     
 ]
