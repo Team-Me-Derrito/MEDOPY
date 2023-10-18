@@ -321,7 +321,7 @@ def getCommunityInterests(request):
                 else:
                     communityInterests[accountInterest] = 1
 
-        return JsonResponse(communityInterests)
+        return JsonResponse({'interests': [{'interest':k, 'count':v} for k, v in communityInterests.items()]})
     
 """
 getCommunityPosts()
