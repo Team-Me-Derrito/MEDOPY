@@ -360,7 +360,7 @@ def login(request):
             return JsonResponse({"success": False})
 
         if response is not None:
-            login = {"sucess": True, "account_id": response["account_id"], "token": response["token"]}
+            login = {"success": True, "account_id": response["account_id"], "token": response["token"]}
         else:
             login = {"success": False}
     return JsonResponse(login)
@@ -480,6 +480,7 @@ def getProjects(request):
         for project in Project.objects.all():
             projects.append({
                 "project_id": project.pk,
+                "id": project.pk,
                 "project_name": project.projectName,
                 "description": project.description
             })
@@ -576,3 +577,5 @@ def getCommunityScore(request):
         for event in events:
             capacity = event.venue.capacity
             tickets = Ticket.objects.filter(event=event)
+
+            
