@@ -164,13 +164,15 @@ def getDiscussionPosts(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
         print("communits posts data is", data)
-        #account = Account.objects.get(pk=data["account_id"], token=data["Token"])
-        #community = account.community
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
+        community = account.community
 
-        communityid = Community.objects.get(pk=2)
         posts = []
-        for post in DiscussionPost.objects.filter(community=communityid):
-            posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
+        for post in DiscussionPost.objects.filter(community=community):
+            posts.append({
+                "accountName": post.account.accountName, 
+                "timestamp":post.timestamp, 
+                "text":post.text})
         # for post in DiscussionPost.objects.all():
         #     posts.append({"accountName": post.account.accountName, "timestamp":post.timestamp, "text":post.text})
 
