@@ -28,6 +28,15 @@ export async function getCommunityProjects(community_id) {
     return await postRequest(endpoint, message);
 }
 
+export async function getCommunityEvents(community_id) {
+    const message = {
+        [COMMUNITY_ID]: community_id
+    };
+
+    const endpoint = path + "events"; // display/projects
+    return await postRequest(endpoint, message);
+}
+
 export async function getCommunityPosts(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id

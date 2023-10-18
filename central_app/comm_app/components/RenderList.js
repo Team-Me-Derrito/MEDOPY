@@ -95,7 +95,7 @@ function RenderToggleBtn({ item, setItems }) {
   )
 }
 
-const blackList = ["fuck", "retarded", "nig"]
+const blackList = ["fuck", "retarded"]
 
 function RenderMessageListItem({ item, setItems }) {
   return (

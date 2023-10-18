@@ -4,7 +4,7 @@ import RenderList from './RenderList';
 import React from 'react';
 import styles from './MapSection.module.css'
 import { useEffect } from 'react';
-import { getCommunityProjects } from '@/pages/api/DataRequest';
+import { getCommunityEvents, getCommunityProjects } from '@/pages/api/DataRequest';
 
 export default function MapSection({ communityID }) {
   const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, });
@@ -13,15 +13,29 @@ export default function MapSection({ communityID }) {
   useEffect(() => { //Asyn function to get data
     async function getData() {
       const result = await getCommunityProjects(communityID);
-      console.log(result)
-      setProjectItems(result.projects);
+      if (result != null) {
+        setProjectItems(result.projects);
+      }
     }
     if (!projectItems.length) {
       getData();
     }
   }, [communityID]);
 
-  const [eventItems, setEventItems] = React.useState(getEvents());
+  const [eventItems, setEventItems] = React.useState([]);
+  useEffect(() => { //Asyn function to get data
+    async function getData() {
+      const result = await getCommunityEvents(communityID);
+      console.log(result)
+      if (result != null) {
+        setEventItems(result.events);
+      }
+    }
+    if (!eventItems.length) {
+      getData();
+    }
+  }, [communityID]);
+
   const [displayEventItems, setDisplayEventItems] = React.useState(eventItems);
 
   return (
