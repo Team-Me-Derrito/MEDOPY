@@ -316,10 +316,10 @@ def getCommunityInterests(request):
         communityInterests = {}
         for accountInterest in AccountInterest.objects.all():
             if accountInterest.account.community == community:
-                if accountInterest in communityInterests:
-                    communityInterests[accountInterest.interestType] += 1
+                if accountInterest.interestType.interestType in communityInterests:
+                    communityInterests[accountInterest.interestType.interestType] += 1
                 else:
-                    communityInterests[accountInterest.interestType] = 1
+                    communityInterests[accountInterest.interestType.interestType] = 1
 
         return JsonResponse({'interests': [{'interest':k, 'count':v} for k, v in communityInterests.items()]})
     
