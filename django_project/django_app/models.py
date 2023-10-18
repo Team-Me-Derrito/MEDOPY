@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Create your models here.
 
@@ -61,7 +61,7 @@ class AccountInterest(models.Model):
 class DiscussionPost(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=datetime.now())
+    timestamp = models.DateTimeField(default=timezone.now())
     text = models.CharField(max_length=200)
 
 class Ticket(models.Model):
