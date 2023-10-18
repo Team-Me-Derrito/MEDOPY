@@ -402,8 +402,9 @@ def getAccountInfo(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
-        result = queries.getAccountInfo(data["account_id"], data["Token"])
         print(data)
+        result = queries.getAccountInfo(data["account_id"], data["Token"])
+        
         return JsonResponse(result)
     
     
