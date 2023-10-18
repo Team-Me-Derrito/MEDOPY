@@ -332,7 +332,7 @@ def getCommunityPosts(request):
                     "post": post.text
                 })
 
-        return JsonResponse(posts[-50])
+        return JsonResponse({"posts": posts})
     
 """
 login()
@@ -509,10 +509,6 @@ def getAttendance(request):
 """
 getAttendance()
     request: data["event_id]
-
-
-
-    For charlotte
 """
 @csrf_exempt
 def setAttendance(request):
@@ -524,3 +520,55 @@ def setAttendance(request):
         result = queries.joinEvent(data["account_id"], data["Token"], data["event_id"], data["attendance"])
 
         return JsonResponse(result)
+    
+"""
+deleteEvent()
+    request: data["event_id", "account_id", "Token"]
+"""
+def deleteEvent(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+        event = Event.objects.get(pk=data["event_id"])
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
+
+        if event.creator == account:
+            event.delete()
+            return JsonResponse({"success": True, "message": "event deleted"})
+        else:
+            return JsonResponse({"success": False, "message": "could not delete user is not the creator"})
+        
+"""
+getUserScore()
+    request: data["account_id", "Token"]
+"""
+def getUserScore(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
+
+        events = Event.objects.all()
+        accountTickets = Ticket.objects.filter(account=account)
+
+        if len(events) == 0:
+            return JsonResponse({"success": False, "message": "no events cannot calculate score"})
+        else:
+            percentScore = len(accountTickets) / len(events) * 100
+            return JsonResponse({"success": True, "percent_score": percentScore})
+        
+"""
+getCommunityScore()
+    request: data["accout_id", "token"]
+"""
+def getCommunityScore(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        account = Account.objects.get(pk=data["account_id"], token=data["Token"])
+        community = account.community
+        
+        events = queries.getEventsByCommunty(community.pk)
+
+        eventSignupRatio = []
+        for event in events:
+            capacity = event.venue.capacity
+            tickets = Ticket.objects.filter(event=event)
