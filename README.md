@@ -26,5 +26,5 @@ Once those steps are complete, go to:
 "MEDOPY/blob/main/central_app/comm_app/public/constants/Database.js"
 And change BASE_URL (line 1) to match the IP and port.
 
-Run development server with:
-`npm run dev`
+Run development server with:<br>
+```npm run dev```
