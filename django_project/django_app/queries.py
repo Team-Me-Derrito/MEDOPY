@@ -109,7 +109,7 @@ def getAccountInfo(account_id, token):
     account = Account.objects.filter(pk=account_id, token=token)
 
     interests = []
-    for interest in AccountInterest.objects.filter(id=account_id):
+    for interest in AccountInterest.objects.filter(account=account):
         interests.append({"interest": interest.interestType.interestType})
 
     score = getUserScore(account[0])
