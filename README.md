@@ -17,9 +17,9 @@ The back-end server should be running now. You can confirm it is running by ente
 Communal Display front end to allow uses to interactive be apart of a community and watch as it grows.
 
 ### Communal Display Setup
-Need to have node.js installed: https://nodejs.org/en/download
-`cd central_app/comm_app/`
-`npm install`
+Need to have node.js installed: https://nodejs.org/en/download<br>
+```cd central_app/comm_app/```<br>
+```npm install```
 
 Now make sure the back-end is setup according to the setup instructions outlined above. 
 Once those steps are complete, go to:
