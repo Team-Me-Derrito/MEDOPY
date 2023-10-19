@@ -1,5 +1,5 @@
 //API
-export const BASE_URL = "http://45.63.26.83:8001/" + "api";
+export const BASE_URL = "http://45.63.26.83:8001";
 export const API_KEY = 'api_key';
 
 //Account entity
@@ -30,3 +30,5 @@ export const INFO = 'info'
 export const POSTS = 'posts'
 export const INTERESTS = 'interests'
 export const PROJECTS = 'projects'
+
+export const NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyCuGRDg72-af_Gl7GQh_63em9tMf_GqGFs"

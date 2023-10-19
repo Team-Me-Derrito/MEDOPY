@@ -10,7 +10,7 @@ export async function postRequest(endpoint, message) {
     }
 
     try {
-        const url = `${BASE_URL}/${endpoint}`;
+        const url = `${BASE_URL}/api/${endpoint}`;
         const response = await fetch(url, {
             method: "POST",
             headers: {

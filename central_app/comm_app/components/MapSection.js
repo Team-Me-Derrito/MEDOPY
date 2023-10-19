@@ -5,6 +5,7 @@ import React from 'react';
 import styles from './MapSection.module.css'
 import { useEffect } from 'react';
 import { getCommunityEvents, getCommunityProjects } from '@/pages/api/DataRequest';
+import { NEXT_PUBLIC_GOOGLE_MAPS_API_KEY } from '@/public/constants/Database';
 
 /**
  * Returns a HTML element of a Map with two side bars
@@ -15,7 +16,7 @@ import { getCommunityEvents, getCommunityProjects } from '@/pages/api/DataReques
  */
 export default function MapSection({ communityData }) {
   //Load script to use google maps api
-  const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, });
+  const { isLoaded } = useLoadScript({ googleMapsApiKey: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, });
 
   //use state to store array of projects associated with current community
   const [projectItems, setProjectItems] = React.useState([]);
