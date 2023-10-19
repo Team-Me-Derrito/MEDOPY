@@ -1,14 +1,18 @@
+"""
+routes.py
+    This file includes the functions that are called when someone calls a particular url from the urls.py file. It will often call the queries.py file for database interactions that are repeated often.
+"""
 from .models import Event, Venue, Project, Account, AccountInterest, Ticket, Community, DiscussionPost, InterestType
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime, timedelta
+from datetime import datetime
 import json, re
 from . import queries, security
 
 """
 getInterestEvents()
     Gets all events that match the current account's community and interests.
-    Required request data: token + account_id.
+    request: data["account_id", "token"]
 """
 @csrf_exempt
 def getInterestEvents(request):
@@ -23,7 +27,7 @@ def getInterestEvents(request):
 """
 getEventInfo()
     Gets all necessary event info from the id for the event page.
-    Request data: event_id
+    request: data["event_id"]
 """
 @csrf_exempt    
 def getEventInfo(request):
@@ -87,6 +91,7 @@ def createAccount(request):
 """
 getAllEvents()
     Returns all the events in the database
+    request:
 """
 @csrf_exempt
 def getAllEvents(request):
@@ -98,6 +103,7 @@ def getAllEvents(request):
 """
 getAllCommuntiyEvents()
     Returns all the events of an account's community.
+    request: data["account_id", "Token"]
 """
 @csrf_exempt
 def getAllCommunityEvents(request):
@@ -114,7 +120,8 @@ def getAllCommunityEvents(request):
 
 """
 getAllCommunityEventsDisplay()
-    Request: community_id
+    Gets all of the events in a community
+    Request: data["community_id"]
 """ 
 @csrf_exempt   
 def getAllCommunityEventsDisplay(request):
@@ -143,6 +150,7 @@ def getUpcommingEvents(request):
 """
 getTicketed()
     Gets all event ids of an accounts upcomming ticketed events.
+    request: data["account_id", "Token"]
 """
 @csrf_exempt
 def getTicketed(request):
@@ -157,7 +165,7 @@ def getTicketed(request):
     
 """
 getDiscussionPosts()
-    Gets all the discussion posts for the users community
+    Gets all the discussion posts for the current user's community
 """
 @csrf_exempt
 def getDiscussionPosts(request):
@@ -181,7 +189,8 @@ def getDiscussionPosts(request):
     
 """
 newDiscussionPost()
-    User can create a new post one the discussion board
+    User can create a new post for the discussion board.
+    request: data["account_id", "Token", "post_text"]
 """
 @csrf_exempt
 def newDiscussionPost(request):
@@ -200,6 +209,11 @@ def newDiscussionPost(request):
             )
         post.save()
 
+"""
+searchEvents()
+    For searching functions when using search bar to get event by name.
+    request: data["account_id", "Token", "query"]
+"""
 @csrf_exempt  
 def searchEvents(request):
     if request.method == "POST":
@@ -251,6 +265,7 @@ def distanceBetween(gps1, gps2):
 
 """
 getCommunityInfo()
+    Get info for a particular community required for the display.
     request: data["community_id]
 """
 @csrf_exempt
@@ -336,6 +351,8 @@ def getCommunityInfo(request):
 
 """
 getProjectsInCommunity()
+    Gets all of the projects in a particular community and sends their
+    info back in a json structure.
     request: data["community_id"]
 """
 @csrf_exempt
@@ -362,6 +379,9 @@ def getProjectsInCommunity(request):
     
 """
 getCommunityInterests()
+    Gets all the interests in a particular community and lists them
+    in a json structure with the amount of people with that interest in
+    the community.
     request: data["community_id"]
 """
 @csrf_exempt
@@ -384,8 +404,8 @@ def getCommunityInterests(request):
     
 """
 getCommunityPosts()
+    Returns the posts on a community's discussion board
     request: data["community_id"]
-    returns the last 50 posts
 """
 @csrf_exempt
 def getCommunityPosts(request):
@@ -408,6 +428,14 @@ def getCommunityPosts(request):
     
 """
 login()
+    Function for accounts to login. The email and password the user has entered
+    is received and it is checked if this email exists in the system if so the 
+    salt is retrieved and added to the inserted password. The hashed password is
+    then check with the existing accounts password in the db.
+    If the password and email match a new session token is generated and stored
+    under this account in the db and a success response is sent back to the app
+    with the account id and session token to be stored and sent back when a new
+    request is made.
     request: data["email", "password"]
 
     return:
@@ -439,6 +467,7 @@ def login(request):
 
 """
 createPost()
+    Allows accounts to create a new post on the communtiy discussion board
     request: data["account_id", "token", "message"]
 """
 @csrf_exempt
@@ -452,9 +481,9 @@ def createPost(request):
 
 
 
-# get account info
 """
 getAccountInfo()
+    Uses the account id and token to get all displayable information about the account.
     request: data["account_id", "token"]
 """
 @csrf_exempt
@@ -471,7 +500,8 @@ def getAccountInfo(request):
     
 """
 getCommunities()
-    request:
+    Gets all of the communities
+    request: data[]
 """
 @csrf_exempt
 def getCommunities(request):
@@ -483,7 +513,8 @@ def getCommunities(request):
 
 """
 createEvent()
-request: data[""]
+    Creates a new event in the database.
+    request: data["project_id", "interest_id", "venue_id", "startDateTime", "duration", "price", "name", "description", "account_id", "Token"]
 """
 @csrf_exempt
 def createEvent(request):
@@ -501,7 +532,8 @@ def createEvent(request):
 
 """
  getVenues()
-    request:
+    Gets all of the venues in the database.
+    request: data[]
  """
 @csrf_exempt
 def getVenues(request):
@@ -523,6 +555,8 @@ def getVenues(request):
     
 """
 getInterestTypes()
+    Gets all of the interest types in the database.
+    request: data[]
 """
 @csrf_exempt
 def getInterestTypes(request):
@@ -541,6 +575,8 @@ def getInterestTypes(request):
     
 """
 getProjects()
+    Gets all of the projects in the database.
+    request: data[]
 """
 @csrf_exempt
 def getProjects(request):
@@ -562,7 +598,8 @@ def getProjects(request):
 
 """
 getAttendance()
-    request: data["event_id]
+    Gets whether the current user is attending an event or not.
+    request: data["event_id", "Token", "account_id"]
 """
 @csrf_exempt
 def getAttendance(request):
@@ -581,8 +618,9 @@ def getAttendance(request):
 
 
 """
-getAttendance()
-    request: data["event_id]
+setAttendance()
+    Sets the attendance of an event as specified in the request data.
+    request: data["event_id", "account_id", "Token", "attendance"]
 """
 @csrf_exempt
 def setAttendance(request):
@@ -597,6 +635,7 @@ def setAttendance(request):
     
 """
 deleteEvent()
+    Removes an event if the account sending the request is the creator of the event.
     request: data["event_id", "account_id", "Token"]
 """
 @csrf_exempt
@@ -615,6 +654,7 @@ def deleteEvent(request):
         
 """
 getUserScore()
+    Calculates the current user's score based off of their community engagement.
     request: data["account_id", "Token"]
 """
 @csrf_exempt
@@ -632,6 +672,7 @@ def getUserScore(request):
         
 """
 getCommunityScore()
+    Calculates the score of a given community based of its members' engagement.
     request: data["accout_id", "token"]
 """
 @csrf_exempt
@@ -646,8 +687,8 @@ def getCommunityScore(request):
 
 """
 updateAccount()
-    For updating an existing acccount
-    request: account_id, Token, accountName, birthday, gender, phoneNumber
+    For updating an existing acccount's information
+    request: data["account_id", "Token", "accountName", "birthday", "gender", "phoneNumber"]
 """
 @csrf_exempt
 def updateAccount(request):
