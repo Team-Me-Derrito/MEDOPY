@@ -41,6 +41,7 @@ def getEventsByCommunty(community_id):
             attendance = getEventAttendance(event)
             events.append({
                 "id": event.pk, 
+                "project": event.project.projectName,
                 "name": event.name,
                 "venue_name": event.venue.locationName,
                 "gps_longitude": event.venue.gpsLongitude,

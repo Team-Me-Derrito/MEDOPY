@@ -44,7 +44,8 @@ def getEventInfo(request):
             "duration": event.duration, 
             "creatorName": event.creator.accountName,
             "creatorEmail": event.creator.email,
-            "creatorPhoneNumber": event.creator.phoneNumber
+            "creatorPhoneNumber": event.creator.phoneNumber,
+            "creator_id": event.creator.pk
             }
 
         return JsonResponse(struct)
