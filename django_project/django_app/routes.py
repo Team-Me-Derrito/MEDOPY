@@ -672,7 +672,7 @@ def updateAccount(request):
         account.community = community
 
         # remove old ones
-        for interest in InterestType.objects.all(account=account):
+        for interest in AccountInterest.objects.all(account=account):
             interest.delete()
 
         # add new ones
