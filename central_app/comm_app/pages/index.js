@@ -1,58 +1,38 @@
-
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import MapSection from "@/components/MapSection";
 import GameSection from "@/components/GameSection";
+import { getCommunityInfo } from './api/DataRequest.js'
 
-//Todo:
-//Change to get all communities -> select one
-
-//Clickable icons
-
-//Pull data from backend
-//Function to generate scores and resize grid
-//Fix loading issue
-//Overlap map data
-//Clickable Icons
-//Use a dictionary
-
-import { SCORE_0, SCORE_1, SCORE_2 } from "@/public/constants/ExampleData.js";
-import { getCommunityInfo, getCommunityProjects, getCommunityPosts } from './api/DataRequest.js'
-
+/**
+ * Home Screen (and only screen) load selected community data
+ * Displays Game section and Map section
+ * @returns 
+ */
 export default function Home() {
-  //Current selected Community
-  const [communityID, setCommunityID] = React.useState(2);
+  //Set ID for community to be loaded in
+  const [communityID, setCommunityID] = React.useState(1);
 
-  //Get all data for given community (use -1 to have no community set + place holder)
+  //Information for current community 
   const [communityData, setCommunityData] = React.useState({ community_id: -1, community_name: "loading..." });
-  useEffect(() => { //Asyn function to get data
+  //Load info for current community and update when selected community is changed
+  useEffect(() => { 
     async function getData() {
       const result = await getCommunityInfo(communityID);
-      setCommunityData(result);
+      if (result != null) { setCommunityData(result); }
     }
     if (communityData.community_id != communityID) { getData(); }
   }, [communityID]);
 
-  const [scoresArray, setScoresArray] = React.useState([]);
-  useEffect(() => {
-      async function getData() {
-          const result = SCORE_1 //await getCommunityScores(communityID);
-          setScoresArray(result);
-      }
-      if (scoresArray == null || !scoresArray.length) {
-          getData(); // Initial data fetch
-      }
-  }, [communityID]);
-
-
+  //Main display consisting of top part the game and bottom part the map
   return (
     <div>
       <GameSection
         communityData={communityData}
         communityID={communityID}
         setCommunityID={setCommunityID}
-        scores={SCORE_1} isize={6}
+        isize={3}
       />
-      <MapSection communityID={communityID} />
+      <MapSection communityData={communityData} />
     </div>
   );
 }

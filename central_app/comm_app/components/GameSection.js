@@ -1,66 +1,79 @@
 import React, { useEffect, useRef } from 'react';
-import styles from './GameSection.module.css'
 import { generatePerlinNoise } from 'perlin-noise'
-import { IMAGE_SOURCES } from '@/public/constants/ImagePaths';
 import RenderList from './RenderList';
-import { getCommunities, getCommunityPosts } from '@/pages/api/DataRequest';
+import styles from './GameSection.module.css'
+import { IMAGE_SOURCES } from '@/public/constants/ImagePaths';
+import { getCommunities, getCommunityInterests, getCommunityPosts } from '@/pages/api/DataRequest';
 
-
-const communities = [
-    { community_id: 1, community_name: 'Community 1' },
-    { community_id: 2, community_name: 'This is the second' },
-    { community_id: 3, community_name: 'The thrid' },
-];
-
-//Improve game banner
-export default function GameSection({ communityData, communityID, setCommunityID, scores, isize }) {
-    //Use state and function to control theme
+/**
+ * Game section to display:
+ *      Tree game, 
+ *      Side board to display community interests and frequency on the left
+ *      Message board on the right
+ *      Buttons to: Toggle boards visibility, Theme and size buttons
+ * @param communityData - Loaded information for currently selected community
+ * @param communityID - ID of community to load data for (Not loaded from server)
+ * @param setCommunityID - Function to set community ID to load data for
+ * @param isize - initial grid size of grid
+ * @returns HTML as described above
+ */
+export default function GameSection({ communityData, communityID, setCommunityID, isize }) {
+    //Control theme
     const [theme, setTheme] = React.useState(0);
     function changeTheme(change) { setTheme((theme + change + 4) % 4); }
 
-    //Use state and function to change size
+    //Control grid size (set #rows and columns is calculated to fit)
     const [rowSize, setRowSize] = React.useState(isize * 2 + 1);
     function changeSize(change) { setRowSize((rowSize + 2 * change + 100) % 100) }
 
-    //Use state and function to toggle message board
-    const [messageDisplay, setMessageDisplay] = React.useState(true);
-    function toggleMessageDiplay() { setMessageDisplay(!messageDisplay) }
+    //Toggle information display
+    const [infoDisplay, setInfoDisplay] = React.useState(true);
+    function toggleInfoDisplay() { setInfoDisplay(!infoDisplay) }
 
-    //Use state and use effect to get all communities for drop down menu
-    const [communities, setCommunities] = React.useState([]);
-    useEffect(() => { //Asyn function to get data
-      async function getData() {
-        const result = await getCommunities();
-        if (result != null) {
-            setCommunities(result.communities);
-        }
-      }
-      if (!communities.length) { getData(); }
-    }, []);
-
-    //Use state to retrieve message items
-    const [messageItems, setMessageItems] = React.useState([]);
+    //Store infomation items in state and update when community is changed
+    const [infoItems, setInfoItems] = React.useState([]);
     //Use effect that retrieves messages every 5seconds
     useEffect(() => {
         async function getData() {
-            const result = await getCommunityPosts(communityID);
-            console.log('Run')
-            if (result != null) {
-                setMessageItems(result.posts);
-            }
+            const result = await getCommunityInterests(communityData.community_id);
+            if (result != null) { setInfoItems(result.interests); } //TODOValues??
         }
-        if (messageItems == null || !messageItems.length) {
-            getData(); // Initial data fetch
+        getData();
+    }, [communityData]);
+
+    //Toggle message board display
+    const [messageDisplay, setMessageDisplay] = React.useState(true);
+    function toggleMessageDiplay() { setMessageDisplay(!messageDisplay) }
+
+    //Store message items in state and update when community is changed / poll every 5seconds
+    const [messageItems, setMessageItems] = React.useState([]);
+    useEffect(() => {
+        async function getData() {
+            const result = await getCommunityPosts(communityData.community_id);
+            if (result != null) { setMessageItems(result.posts); }
         }
-        const fetchDataInterval = setInterval(getData, 5000); // Fetch data every 10 seconds
+        getData();
+        //Poll for new messages every 5seconds
+        const fetchDataInterval = setInterval(getData, 5000);
         return () => {
             clearInterval(fetchDataInterval);
         };
-    }, [communityID]);
+    }, [communityData]);
+
+    //Load data for all communities -> used for drop down menu
+    const [communities, setCommunities] = React.useState([]);
+    useEffect(() => { //Asyn function to get data
+        async function getData() {
+            const result = await getCommunities();
+            if (result != null) { setCommunities(result.communities); }
+            else { setCommunities([]) }
+        }
+        if (!communities.length) { getData(); }
+    }, []);
 
     return (
         <div className={styles['game-container']}>
-            {/*Top Banner*/}
+            {/*Top Banner sign*/}
             <div className={styles['game-banner-container']}>
                 <GameBanner
                     communityData={communityData}
@@ -68,32 +81,60 @@ export default function GameSection({ communityData, communityID, setCommunityID
                     setCommunityID={setCommunityID}
                 />
             </div>
-            {/*Tree Game*/}
-            <GameDisplay scores={scores} theme={theme} rowSize={rowSize} />
-            {/*Chat Display*/}
+            {/*Tree Game display*/}
+            <GameDisplay
+                scores={communityData == null ? [] : communityData.scores}
+                theme={theme} rowSize={rowSize} />
+
+            {/*Info Display on left*/}
+            {infoDisplay &&
+                <div className={`${styles['overlay-box']} ${styles['left-overlay']}`}>
+                    <h2 className={styles['overlay-title']}>Community Interests</h2>
+                    <RenderList items={infoItems} setItem={setInfoItems} type="community_info" />
+                </div>
+            }
+
+            {/*Chat Display on right*/}
             {messageDisplay &&
                 <div className={`${styles['overlay-box']} ${styles['right-overlay']}`}>
                     <h2 className={styles['overlay-title']}>Community Messages</h2>
                     <RenderList items={messageItems} setItem={setMessageItems} type="message" />
                 </div>
             }
+
             {/* Buttons and Dropdown*/}
             <div className={styles['game-button-container']}>
+                {/* Change theme buttons */}
                 <button className={styles['b1']} onClick={() => changeTheme(-1)}>⬅</button>
                 <button className={styles['b2']} onClick={() => changeTheme(1)}>➡</button>
+                {/* Change grid size buttons */}
                 <button className={styles['b3']} onClick={() => changeSize(1)}>+</button>
                 <button className={styles['b4']} onClick={() => changeSize(-1)}>
                     <div className={styles['b4-1']}>-</div>
                 </button>
-                <button className={styles['b5']} onClick={() => toggleMessageDiplay()}>
-                    <div className={styles['b5-1']}>💬</div>
+                {/* Toggle information button */}
+                <button className={styles['b5']} onClick={() => toggleInfoDisplay()}>
+                    <div className={styles['b5-1']}>🛈</div>
                 </button>
+                {/* Toggle chat button */}
+                <button className={styles['b6']} onClick={() => toggleMessageDiplay()}>
+                    <div className={styles['b6-1']}>💬</div>
+                </button>
+                {/* <button className={styles['b6']} onClick={() => refresh()}>
+                    <div className={styles['b6-1']}>---</div>
+                </button> */}
+                {/* Change selected community drop down menu */}
                 <DropdownMenu currentID={communityID} setID={setCommunityID} options={communities} />
             </div>
         </div>
     );
 }
 
+/**
+ * Function to display game banner
+ * @param communityData - Data for currently loaded community 
+ * @returns HTML of banner in a hanging sign
+ */
 function GameBanner({ communityData }) {
     return (
         <div className={styles['game-banner']}>
@@ -102,6 +143,14 @@ function GameBanner({ communityData }) {
     )
 }
 
+
+/**
+ * Function to display dropdown menu of communities
+ * @param currentID - ID of community to display
+ * @param setID - set ID of community to display
+ * @param options - list of communities
+ * @returns HTML
+ */
 function DropdownMenu({ currentID, setID, options }) {
     const handleSelectChange = (event) => {
         const communityID = event.target.value;
@@ -120,18 +169,26 @@ function DropdownMenu({ currentID, setID, options }) {
     )
 }
 
-//Take in an array of numbers -> re order to have in display order
+
+/**
+ * Function to store stage of game and asnychornously update it when a dependant state is changed
+ * @param scores - score array of community
+ * @param theme
+ * @param rowSize
+ * @returns 
+ */
 function GameDisplay({ scores, theme, rowSize }) {
-    //Varaible lock grid permuatation
-    const [firstLoad, setFirstLoad] = React.useState(true);
-    //Varaible to store permutation of scores
-    const [displayScores, setDisplayScores] = React.useState(scores);
+    //Varaible to only set permutation once on load
+    const [firstLoad, setFirstLoad] = React.useState(0);
+
+    //Varaible to store permutation of scores to display
+    const [displayScores, setDisplayScores] = React.useState([]);
     function setPermutate(scores, rows, cols) {
         setDisplayScores(permuteScores(scores, rows, cols))
     }
 
-    //Variable to store number of coloumns ->
-    const [colSize, setColSize] = React.useState(0);
+    //Variable to store number of coloumns
+    const [colSize, setColSize] = React.useState(1);
     function updateColSize(newCol, reload) {
         if (reload || colSize != newCol) {
             setColSize(newCol)
@@ -139,16 +196,29 @@ function GameDisplay({ scores, theme, rowSize }) {
         }
     }
 
+    //Use state to update scores if community is changed
+    useEffect(() => { //Asyn function to get data
+        if (scores != null) {
+            setDisplayScores(setPermutate(scores, rowSize, colSize))
+        }
+        setDisplayScores([])
+        setFirstLoad(0)
+    }, [scores]);
+
+    //Canvas to display tree game
     const canvasRef = useRef(null);
+    //Use state to reload canvas on change
     useEffect(() => {
         const images = IMAGE_SOURCES.map((src, index) => {
             const image = new Image();
             image.src = src;
             image.onload = () => {
-                if (firstLoad) {
+                //Might need to reload a few times to actually work
+                //This is a hot fix to bug that the cause is not known
+                if (firstLoad < 8) {
                     setPermutate(scores, rowSize, colSize)
-                    setFirstLoad(false)
                 }
+                setFirstLoad(firstLoad + 1)
                 window.dispatchEvent(new Event('resize'))
             };
             return image;
@@ -161,7 +231,9 @@ function GameDisplay({ scores, theme, rowSize }) {
                 displayScores)
         };
 
+        //Reload game on resize and refresh
         window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('refresh', resizeCanvas);
         return () => { window.removeEventListener('resize', resizeCanvas); };
     }, [displayScores, theme, rowSize, colSize])
 
@@ -172,6 +244,16 @@ function GameDisplay({ scores, theme, rowSize }) {
     );
 }
 
+/**
+ * Function to size and draw images onto game canvas
+ * @param {*} canvas - canvas to draw trees onto
+ * @param {*} images - images of trees to use
+ * @param {*} theme  - currently selected theme
+ * @param {*} rowSize - number of rows selected by user
+ * @param {*} col     - number of columns (derived)
+ * @param {*} updateColSize - function to update number of columns
+ * @param {*} scores - permuted scores array to display
+ */
 function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores) {
     //Canvas size
     const canvasContainer = canvas.parentElement;
@@ -185,13 +267,13 @@ function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores
     context.fillStyle = ["#4a9547", "lightblue", "#ffd16e", "pink"][theme];
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    //coded values:
+    //Hard coded values:
     const finalRow = rowSize;
     const imageSize = 1024;
     const Xoverlap = 1024 - 664 - 498;
     const Yoverlap = 1024 - 180 - 135;
 
-    //Layout values
+    //Calculate scale and number of columns based on screen size and number of rows
     const scale = (canvas.height / ((imageSize - Yoverlap) * (finalRow) + Yoverlap)) * 0.99;
     const finalCol = Math.floor(((canvas.width / scale) - Xoverlap) / (imageSize - Xoverlap));
     if (finalCol != col) { updateColSize(finalCol, false) }
@@ -202,15 +284,16 @@ function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores
     const xOffset = (canvas.width - (effectiveWidth * (finalCol) + scale * Xoverlap)) / 2;
     const yOffset = (canvas.height - (effectiveHeight * (finalRow) + scale * Yoverlap)) / 4;
 
-    //const tileCount = Math.max(0, (finalRow) * (finalCol) - 4 - finalRow / 2);
-    //Place images in grid
+    //Variable to keep track of location in score array
     let scoreInc = 0;
+    //Place images in grid
     for (let row = 0; row < finalRow; row++) {
         for (let col = 0; col < finalCol; col++) {
             //Skip the final column and the corners
             if ((row % 2 == 1 && col + 1 == finalCol) || (row == 0 && col == 0) ||
                 (row == 0 && col + 1 == finalCol) || (row + 1 == finalRow && col == 0) ||
                 (row + 1 == finalRow && col + 1 == finalCol)) { continue }
+            //Load image based on score and theme
             const imgIndex = (scores[scoreInc % scores.length] == 0 ? 0 : scores[scoreInc % scores.length] + 5 * theme);
             scoreInc += 1;
             const image = images[imgIndex] ?? images[0];
@@ -221,7 +304,17 @@ function updateCanvas(canvas, images, theme, rowSize, col, updateColSize, scores
     }
 }
 
+/**
+ * User perlin noise to generate clustering of high scores on 2d grid
+ * @param {*} scores - score array to permute
+ * @param {*} n      - number of rows
+ * @param {*} m      - number of columns
+ * @returns a permuted score array
+ */
 function permuteScores(scores, n, m) {
+    if (scores == null || n == 0 || m == 0) {
+        return [];
+    }
     //Array to generate random noise in 2d grid
     const arr = generatePerlinNoise(m, n, { octaveCount: 2, persistence: 0.02 })
 
@@ -235,84 +328,10 @@ function permuteScores(scores, n, m) {
 
     //Place sorted into index array at index
     const sortedScores = scores.sort()
-    const scoreArray = integerArray.map(indexAtIndex => sortedScores[indexAtIndex % sortedScores.length]);
-    return scoreArray;
-}
-
-
-//Functions used for testing
-function formatNumber(num) {
-    return (num).toFixed(2).padStart(3, '0');
-}
-
-function format2DArray(arr, n, m) {
-    for (let i = 0; i < n; i++) {
-        const row = arr.slice(i * m, (i + 1) * m);
-        const formatRow = row.map(num => formatNumber(num))
-        console.log(formatRow.join('\t'));
-    }
-}
-
-function prn2d(arr, n, m) {
-    for (let i = 0; i < n; i++) {
-        const row = arr.slice(i * m, (i + 1) * m);
-        console.log(row.join('\t'));
-    }
-}
-
-function arraysAreEqual(arr1, arr2) {
-    if (arr1.length !== arr2.length) {
-        return false;
-    }
-    for (let i = 0; i < arr1.length; i++) {
-        if (arr1[i] !== arr2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-
-function getCommunityPostsTest(communityId) {
-    if (communityId == 1) {
-        return [
-            { message_id: 1, sender: "J1m", message: "I like dogs" },
-            { message_id: 2, sender: "J.2", message: "I don't like cats" },
-            { message_id: 3, sender: "J3remy", message: "123 one two three" },
-            { message_id: 4, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 5, sender: "J4ck", message: "This is the fourth message" },
-        ];
-    } else if (communityId == 2) {
-        return [
-            { message_id: 1, sender: "J1m", message: "I like dogs" },
-            { message_id: 2, sender: "J.2", message: "I don't like cats" },
-            { message_id: 3, sender: "J3remy", message: "123 one two three" },
-            { message_id: 4, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 5, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 6, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 7, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 8, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 9, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 10, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 11, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 12, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 13, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 14, sender: "J4ck", message: "This is the fourth message" },
-            { message_id: 15, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-            { message_id: 16, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-            { message_id: 17, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-            { message_id: 18, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-            { message_id: 19, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-            { message_id: 20, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-        ];
-    }
-
-    return [
-        { message_id: 18, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-        { message_id: 19, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-        { message_id: 20, sender: "J4ck", message: "This is the fourth messageas jdhkjajds hfjklahdf;ja sd;jf;ljas;ldk fj;asj;dsf;k jds;fk;lj" },
-    ];
-
-
+    const scoreArray = integerArray.map(indexAtIndex => (sortedScores.length > indexAtIndex ? sortedScores[indexAtIndex] : 0));
+    const intArray = scoreArray.map(floatNumber => {
+        const result = Math.min(5, Math.max(0, Math.round(floatNumber)));
+        return result;
+    });
+    return intArray;
 }

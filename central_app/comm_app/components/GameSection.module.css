@@ -8,7 +8,7 @@
   border: 0px solid black;
 }
 
-/* Banner */
+/* Header banner container to display sign*/
 .game-banner-container {
   position: absolute;
   width: 30%;
@@ -22,6 +22,7 @@
   background-repeat: no-repeat;
 }
 
+/* Format header banner text */
 .game-banner {
   width: 100%;
   position: absolute;
@@ -36,7 +37,7 @@
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
-/* Chat Box */
+/* Chat Box and infomation display*/
 .overlay-box {
   position: absolute;
   background-color: rgb(173, 115, 81);
@@ -49,11 +50,20 @@
   z-index: 3;
 }
 
+/* Display overlay on right */
 .right-overlay {
   right: 6.5%;
 }
+
+/* Display overlay on left */
+.left-overlay {
+  left: 6.5%;
+}
+
+/* Format text for overlay title */
 .overlay-title {
   text-align: center;
+  color: #430000;;
   border-bottom: 2px solid #551313;
   font-size: 3rem;
   margin-top: 1rem;
@@ -61,16 +71,11 @@
   padding-bottom: 0.5rem;
 }
 
-
-
-/* Buttons */
+/* Button containers */
 .game-button-container {
   display: flex;
-  /* background-color: #000; */
-  /* display: inline-flex; */
   position: absolute;
   align-items: center;
-
   height: 10%;
   bottom: 2.5%;
   right: 7.5%;
@@ -78,15 +83,16 @@
   z-index: 3;
   background-size: 100%;
   background-repeat: no-repeat;
-
   margin: 5px;
 }
+
+/*Specific for to individual style buttons 1-5 and dropdown menu, some make use of inner divs to move */
 .b1 {
-  width: 80px; /* Adjust the width as needed */
-  height: 40px; /* Adjust the height as needed */
-  border: 3px solid #204811; /* Add a border with the desired color */
+  width: 80px; 
+  height: 40px; 
+  border: 3px solid #204811; 
   color: #204811;
-  border-radius: 25px 0px 0px 25px; /* Makes the button circular */
+  border-radius: 25px 0px 0px 25px; 
   background-color: rgb(106, 153, 75);
   font-size: 360%;
   line-height: 20px; 
@@ -94,11 +100,11 @@
 }
 
 .b2 {
-  width: 80px; /* Adjust the width as needed */
-  height: 40px; /* Adjust the height as needed */
-  border: 3px solid #204811; /* Add a border with the desired color */
+  width: 80px;
+  height: 40px;
+  border: 3px solid #204811;
   color: #204811;
-  border-radius: 0px 25px 25px 0px; /* Makes the button circular */
+  border-radius: 0px 25px 25px 0px;
   background-color: rgb(106, 153, 75);
   font-size: 360%;
   line-height: 20px; 
@@ -107,11 +113,11 @@
 
 .b3 {
   margin: 0 0 0 10px;
-  width: 80px; /* Adjust the width as needed */
-  height: 40px; /* Adjust the height as needed */
-  border: 3px solid #204811; /* Add a border with the desired color */
+  width: 80px; 
+  height: 40px; 
+  border: 3px solid #204811;
   color: #204811;
-  border-radius: 25px 0px 0px 25px; /* Makes the button circular */
+  border-radius: 25px 0px 0px 25px;
   background-color: rgb(106, 153, 75);
   font-size: 360%;
   line-height: 20px; 
@@ -119,11 +125,11 @@
 }
 
 .b4 {
-  width: 80px; /* Adjust the width as needed */
-  height: 40px; /* Adjust the height as needed */
-  border: 3px solid #204811; /* Add a border with the desired color */
+  width: 80px;
+  height: 40px;
+  border: 3px solid #204811;
   color: #204811;
-  border-radius: 0px 25px 25px 0px; /* Makes the button circular */
+  border-radius: 0px 25px 25px 0px;
   background-color: rgb(106, 153, 75);
   font-size: 360%;
   align-items: center;
@@ -134,11 +140,10 @@
 }
 
 .b5 {
-  width: 80px; /* Adjust the width as needed */
-  height: 40px; /* Adjust the height as needed */
-  border: 3px solid #204811; /* Add a border with the desired color */
-  /* color: #204811; */
-  border-radius: 25px 25px 25px 25px; /* Makes the button circular */
+  width: 80px;
+  height: 40px;
+  border: 3px solid #204811; 
+  border-radius: 25px 25px 25px 25px;
   background-color: rgb(106, 153, 75);
   font-size: 220%;
   align-items: center;
@@ -148,6 +153,23 @@
 }
 
 .b5-1 {
+  transform: translate(0, -20%);
+}
+
+.b6 {
+  width: 80px; 
+  height: 40px; 
+  border: 3px solid #204811; 
+  border-radius: 25px 25px 25px 25px;
+  background-color: rgb(106, 153, 75);
+  font-size: 220%;
+  align-items: center;
+  margin: 0 10px 0 0px;
+  color: transparent;  
+  text-shadow: 0 0 0 #204811;
+}
+
+.b6-1 {
   transform: translate(0, -20%);
 }
 
@@ -166,18 +188,17 @@
 }
 
 .dropdown-select {
-  /* width: fit-content; */
   height: 100%;
   border: none;
   background-color: transparent;
   color: #204811;
-  font-size: 20px; /* Adjust the font size as needed */
+  font-size: 20px; 
   font-weight: bold;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
-  padding: 5px 10px; /* Adjust the padding as needed */
+  padding: 5px 10px;
 }
 
 .dropdown-select .dropdown-option {
@@ -200,15 +221,7 @@
   pointer-events: none;
 }
 
-
-
-
-
-
-
-
-
-
+/* Size canvas */
 .canvas-container {
   width: 100%;
   height: 100vh;

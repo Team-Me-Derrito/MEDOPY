@@ -3,6 +3,7 @@ import { postRequest } from './BaseRequest.js';
 
 const path = 'display/';
 
+//Get data for a all community
 export async function getCommunities() {
     const message = {};
 
@@ -10,6 +11,7 @@ export async function getCommunities() {
     return await postRequest(endpoint, message);
 }
 
+//Get data for a single community
 export async function getCommunityInfo(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id
@@ -19,6 +21,7 @@ export async function getCommunityInfo(community_id) {
     return await postRequest(endpoint, message);
 }
 
+//Get all projects within a community
 export async function getCommunityProjects(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id
@@ -28,6 +31,7 @@ export async function getCommunityProjects(community_id) {
     return await postRequest(endpoint, message);
 }
 
+//Get all events within a community
 export async function getCommunityEvents(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id
@@ -37,6 +41,7 @@ export async function getCommunityEvents(community_id) {
     return await postRequest(endpoint, message);
 }
 
+//Get last 50posts from community
 export async function getCommunityPosts(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id
@@ -46,6 +51,7 @@ export async function getCommunityPosts(community_id) {
     return await postRequest(endpoint, message);
 }
 
+//Get interests and frequency in a community
 export async function getCommunityInterests(community_id) {
     const message = {
         [COMMUNITY_ID]: community_id

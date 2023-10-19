@@ -1,12 +1,16 @@
 import React from 'react';
 import styles from './RenderList.module.css'
+import { BLACK_LIST } from '@/public/constants/BlackList';
 
+/**
+ * Component to render a list of items in a selected format based on type
+ * @param {*} param0 
+ * @returns 
+ */
 export default function RenderList({ items, setItem, type }) {
   if (items == null) {
-    // \\throw new Error("Null items")
     return <div>loading</div>
   }
-  console.log(items)
   return (
     <ul className={styles['side-list']}>
       {items.map((item) => (
@@ -18,6 +22,13 @@ export default function RenderList({ items, setItem, type }) {
   );
 }
 
+/**
+ * Helper function to select which format an item is being rendered in
+ * @param {} item 
+ * @param {*} setItem 
+ * @param {*} type 
+ * @returns HTML of item rendered in selected format
+ */
 function hRenderList(item, setItem, type) {
   if (type === "project") {
     return <RenderProjectListItem item={item} setItems={setItem} />
@@ -25,11 +36,22 @@ function hRenderList(item, setItem, type) {
     return <RenderEventListItem item={item} setItems={setItem} />
   } else if (type == "message") {
     return <RenderMessageListItem item={item} setItems={setItem} />
+  } else if (type == "community_info") {
+    return <RenderInterestItem item={item} setItems={setItem} />
   }
   throw new Error('incorrect type specified');
 }
 
+/**
+ * Format to render project items
+ * @param {} param0 
+ * @returns 
+ */
 function RenderProjectListItem({ item, setItems }) {
+  const options1 = { year: 'numeric', month: 'long', day: 'numeric' };
+  const date1 = new Date(item.project_start);
+  const date2 = new Date(item.project_end);
+
   return (
     <div>
       <div className={styles['toggle-container']}>
@@ -38,10 +60,14 @@ function RenderProjectListItem({ item, setItems }) {
       </div>
       <div className={`${styles['toggled-container']} ${item.isOpen ? styles['line_on'] : styles['line_off']}`}>
         <div className={styles['toggled-container-content']}>
-          From {item.project_start} until {item.project_end}
+          From: <b>{date1.toLocaleString('en-US', options1)}</b> <br />
+          Until: <b>{date2.toLocaleString('en-US', options1)}</b>
           {item.isOpen && (
-            <div className={styles["additional-info"]}>
-              {item.project_description}
+            <div className={styles["additional-info1"]}>
+              <b>Description:</b>
+              <div className={styles["additional-info"]}>
+                {item.project_description}
+              </div>
             </div>
           )}
         </div>
@@ -50,7 +76,15 @@ function RenderProjectListItem({ item, setItems }) {
   )
 }
 
+/**
+ * Formant to render event items
+ * @param {} param0 
+ * @returns 
+ */
 function RenderEventListItem({ item, setItems }) {
+  const date = new Date(item.start_date_time);
+  const options1 = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options2 = { hour: '2-digit', minute: '2-digit' };
   return (
     <div>
       <div className={styles['toggle-container']}>
@@ -59,26 +93,33 @@ function RenderEventListItem({ item, setItems }) {
       </div>
       <div className={`${styles['toggled-container']} ${item.isOpen ? styles['line_on'] : styles['line_off']}`}>
         <div className={styles['toggled-container-content']}>
-          Associated with: {item.project_id}<br /> {/* Get Associated project */}
-          Category: {item.interestType}<br />
-          Date & Time: {item.startDateTime}<br />
+          Project:<b> {item.project}</b><br /> {/* Get Associated project */}
+          {/* Category: {item.interestType}<br /> */}
+          Date: <b>{date.toLocaleString('en-US', options1)}</b><br />
+          Where: <b>{item.venue_name} </b><br />
           {item.isOpen && (
-            <div className={styles["additional-info"]}>
-              Duration: {item.duration} {item.duration == 1 ? "Hour" : "Hours"}<br />
-              Price: {item.price}<br />
-              Where: {item.locationName} ({item.address})<br />
-              Avaliability: {item.booked ?? 0} / {item.capacity}<br />
-
-              Description: {item.description}<br />
-              Hosted By: {item.creator}
+            <div className={styles["additional-info1"]}>
+              <b>More Details:</b>
+              <div className={styles["additional-info"]}>
+                Time: {date.toLocaleString('en-US', options2)}<br />
+                Duration: {item.duration} {item.duration == 1 ? "Hour" : "Hours"}<br />
+                Avaliability: {item.attendance} / {item.capacity}<br />
+                Hosted By: {item.creator_name}
+              </div>
             </div>
           )}
+
         </div>
       </div>
     </div>
   )
 }
 
+/**
+ * Toggle button component used in project and event items
+ * @param {} param0 
+ * @returns 
+ */
 function RenderToggleBtn({ item, setItems }) {
   const toggleItem = (itemId, setItems) => {
     setItems((prevItems) =>
@@ -95,22 +136,44 @@ function RenderToggleBtn({ item, setItems }) {
   )
 }
 
-const blackList = ["fuck", "retarded"]
-
+/**
+ * Format to render message items
+ * @param {*} param0 
+ * @returns 
+ */
 function RenderMessageListItem({ item, setItems }) {
+  const date = new Date(item.post_timestamp);
+  const options2 = { hour: '2-digit', minute: '2-digit', hour12: false };
   return (
-    <div>
-      <p1>{item.poster_account} : {filter(item.post)}</p1>
+    <div className={styles["item-name2"]}>
+      <p1>{item.poster_account} ({date.toLocaleString('en-US', options2)}): {filter(item.post)}</p1>
     </div>
   )
 }
 
-function filter(word) {
-  for (var i = 0; i < blackList.length; i++) {
-    if (word.toLowerCase().includes(blackList[i])) {
+/**
+ * Function to filter a post through a blacklist
+ * @param message the post to be filtered
+ * @returns either the message if no words black listed or a censored version of the message
+ */
+function filter(message) {
+  for (var i = 0; i < BLACK_LIST.length; i++) {
+    if (message.toLowerCase().includes(BLACK_LIST[i])) {
       return ("[REDACTED]");
     }
   }
-  return word
+  return message
 }
 
+/**
+ * Format to render community interest frequencies
+ * @param {} param0 
+ * @returns 
+ */
+function RenderInterestItem({ item, setItems }) {
+  return (
+    <div className={styles["item-name1"]} >
+      <p1>{item.interest}: {item.count}</p1>
+    </div>
+  )
+}

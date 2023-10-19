@@ -1,3 +1,5 @@
+//Image paths for tree game
+//All images genereted using Bing Chat
 export const IMAGE_SOURCES = [
     '/images/GameImages/Tile1.png',
 

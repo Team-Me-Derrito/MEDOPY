@@ -1,13 +1,12 @@
+/* Format to render sidelist size */
 .side-list {
-    /* width: 100%; */
-    max-height: 75%;
+    max-height: 85%;
     overflow-y: auto;
     overflow-x: hidden;
-    /* height: 100%; */
     margin-left: 5%;
-    /* margin-top: 10px; */
 }
 
+/* Side list scrollbar styling */
 .side-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -24,35 +23,39 @@
 }
 
 .side-list::-webkit-scrollbar-button:end:increment {
-    height: 10%;
+    height: 7.5%;
     display: block;
     background: transparent;
 }
 
-
+/* Container for each list item */
 .list-item-container {
+    font-weight: bold;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
 
+/* Container for buttons and heading */
 .toggle-container {
     display: flex;
     align-items: center;
 }
 
+/* Container for section of item it is toggled visibility */
 .toggled-container {
     display: flex;
     align-items: flex-start;
     margin-left: 11px;
 }
 
+/* Styling for if the item is toggled on for off */
 .line_on {
     border-left: 3px solid #edfb55
 }
 
 .line_off {
-    border-left: 3px solid rgb(69, 69, 69);
+    border-left: 3px solid rgb(44, 44, 44);
     position: relative;
 }
 
@@ -68,23 +71,56 @@
     height: 0;
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
-    border-top: 6px solid rgb(69, 69, 69);
+    border-top: 6px solid rgb(44, 44, 44);
 }
 
+/* Styling for toggled container */
 .toggled-container-content {
+    font-family: Arial, sans-serif;
+    color: #130000;
+    font-weight: 400;
+    font-size: 100%;
     flex: 1;
-    margin-left: 11px;
+    margin-left: 21px;
 }
 
-
+/* Styling for the top section of each item - projects and events*/
 .item-name {
-    font-size: 1.5rem;
+    font-family: 'Times New Roman', Arial, sans-serif;
+    font-size: 160%;
+    color: #430000;
+    font-weight: bold;
     margin: 0px;
     margin-left: 10px;
     flex: 1;
     overflow-wrap: break-word;
 }
 
+/* Styling for top section of each item - COmmunity interests */
+.item-name1 {
+    font-family: Arial, sans-serif;
+    font-size: 160%;
+    color: #2c0000;
+    font-weight: bold;
+    margin: 0px;
+    margin-left: 10px;
+    flex: 1;
+    overflow-wrap: break-word;
+}
+
+/* Styling for community messages */
+.item-name2 {
+    font-family: Arial, sans-serif;
+    font-size: 100%;
+    color: #000000;
+    font-weight: 400;
+    margin: 0px;
+    margin-left: 0px;
+    flex: 1;
+    overflow-wrap: break-word;
+}
+
+/* Toggle button styling */
 .toggle-button {
     width: 24px;
     height: 24px;
@@ -95,23 +131,33 @@
     cursor: pointer;
 }
 
+/* More toggle button styling */
 .circle {
     width: 100%;
     height: 100%;
     border-radius: 50%;
 }
 
+/* Styling when toggle is turned on */
 .filled .circle {
     background-color: #edfb55
         /* Change to your desired filled color */
 }
 
+/* Styling when toggle is turned off */
 .unfilled .circle {
-    background-color: rgb(69, 69, 69);
+    background-color: rgb(44, 44, 44);
     /* Change to your desired unfilled color */
 }
 
+/* Styling for outer part of more information */
 .additional-info {
+    margin-left: 10px;
+    overflow-wrap: break-word;
+}
+
+/* Styling for inner part of more information */
+.additional-info1 {
     margin-top: 5px;
     overflow-wrap: break-word;
 }
