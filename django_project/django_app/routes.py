@@ -642,3 +642,43 @@ def getCommunityScore(request):
         
         score = queries.getCommunityScore(community)
         return JsonResponse(score)
+
+"""
+updateAccount()
+    For updating an existing acccount
+    request: account_id, Token, accountName, birthday, gender, phoneNumber
+"""
+@csrf_exempt
+def updateAccount(request):
+    if request.method == "POST":
+        data = request.body.decode("utf-8")
+        data = json.loads(data)
+        print("update account data is ", data)
+
+        accounts = Account.objects.filter(pk=data["account_id"], token=data["Token"])
+        if len(accounts) != 1:
+            JsonResponse({"success": False, "message": "Couldn't find this account in db"})
+        
+        account = accounts[0]
+
+        account.accountName = data["AccountName"]
+        account.birthday = data["Birthday"]
+        account.gender = data["Gender"]
+        account.phoneNumber = data["PhoneNumber"]
+        account.email = data["Email"]
+
+        community = Community.objects.get(pk=data["community_id"])
+        account.community = community
+
+        # remove old ones
+        for interest in InterestType.objects.all(account=account):
+            interest.delete()
+
+        # add new ones
+        for interest_id in data["interestTypes"]:
+            interest = InterestType.objects.get(pk=interest_id)
+            accountInterest = AccountInterest(account=account, interestType=interest)
+            accountInterest.save()
+
+        account.save()
+        return JsonResponse({"success": True, "message": "Account info updated"})
