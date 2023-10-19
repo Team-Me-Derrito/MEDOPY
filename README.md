@@ -8,4 +8,4 @@ Clone the MEDOPY repository and ensure that a recent version of Python is instal
 
 After installing those packages navigate to MEDOPY/django_project/ subfolder and run the following command:<br>
 ```python(your version) manage.py runserver (Optional IP:port)```<br>
-The back-end server should be running now. You can confirm it is running by going to the url that is provided when you run that command. There is a meaningless html file that will show but if there are no errors then the backend is running properly.
+The back-end server should be running now. You can confirm it is running by entering that url that is provided when you run that command into your browser. There is a meaningless html file that will show but if there are no errors then the backend is running properly.
