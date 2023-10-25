@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
-    "HTTP://localhost:3000",
+    "HTTP://localhost:3000", '*'
 ]
 
 MIDDLEWARE = [
