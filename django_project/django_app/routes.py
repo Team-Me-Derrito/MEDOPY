@@ -413,6 +413,8 @@ def getCommunityPosts(request):
         data = request.body.decode("utf-8")
         data = json.loads(data)
 
+        print(data)
+
         community = Community.objects.get(pk=data["community_id"])
 
         posts = []
